@@ -77,7 +77,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                   <object class="GtkSwitch" id="button_enable_no2">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="margin_left">100</property>
+                    <property name="margin_left">200</property>
                     <property name="active">True</property>
                   </object>
                   <packing>
@@ -104,7 +104,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="margin_right">100</property>
+                    <property name="margin_right">200</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -127,7 +127,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                   <object class="GtkSwitch" id="button_enable_co">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="margin_left">100</property>
+                    <property name="margin_left">200</property>
                     <property name="active">True</property>
                   </object>
                   <packing>
@@ -154,7 +154,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="margin_right">100</property>
+                    <property name="margin_right">200</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

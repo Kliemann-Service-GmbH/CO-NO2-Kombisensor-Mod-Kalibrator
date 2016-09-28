@@ -22,7 +22,7 @@ Description="Kalibrator Software für die CO/NO2 Kombisensoren mit Modbus Interf
 After=weston.service
 
 [Service]
-Environment="XDG_RUNTIME_DIR=/run/shm/wayland"
+Environment="XDG_RUNTIME_DIR=/run/user/root"
 Environment="GDK_BACKEND=wayland"
 Environment="XMZ_HARDWARE=0.1.0"
 Environment="LANG=de_DE.UTF-8"
