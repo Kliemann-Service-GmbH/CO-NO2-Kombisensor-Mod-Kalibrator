@@ -23,6 +23,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
 -->
 <interface>
   <requires lib="gtk+" version="3.16"/>
+  <!-- interface-local-resource-path ../../../share -->
   <!-- interface-license-type gplv2 -->
   <!-- interface-name Kalibrator -->
   <!-- interface-description Kalibrator Software f\303\274r die CO/NO2 Kombisensoren mit Modbus Interface -->
