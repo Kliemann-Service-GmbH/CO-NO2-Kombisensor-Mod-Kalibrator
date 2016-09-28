@@ -15,15 +15,23 @@ cp -v ./target/release/kalibrator /usr/bin/kalibrator
 # Systemd Unit File anlegen
 cat <<EOF | tee /etc/systemd/system/kalibrator.service
 #
-# xMZ-Mod-Touch-Server systemd unit file
+# Kalibrator systemd unit file
 #
 [Unit]
 Description="Kalibrator Software für die CO/NO2 Kombisensoren mit Modbus Interface"
-After=multi-user.target
+After=weston.service
+
 [Service]
+Environment="XDG_RUNTIME_DIR=/run/shm/wayland"
+Environment="GDK_BACKEND=wayland"
+Environment="XMZ_HARDWARE=0.1.0"
+Environment="LANG=de_DE.UTF-8"
 ExecStart=/usr/bin/kalibrator &
+Restart=always
+RestartSec=10
+
 [Install]
-WantedBy=multi-user.target
+WantedBy=graphical.target
 EOF
 
 # Unit aktivieren ...
