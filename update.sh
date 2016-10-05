@@ -14,7 +14,7 @@ systemctl stop kalibrator.service
 # Bilde neues Release
 cargo build --release
 # Kopiere neu erstellte Binaries und Assets in das Dateisystem
-cp -v ./target/release/xmz_mod_touch_gui /usr/bin/kalibrator
+cp -v ./target/release/kalibrator /usr/bin/kalibrator
 ## Erstelle Assets Verzeichnis
 [ -d "/usr/share/kalibrator/" ] || mkdir "/usr/share/kalibrator/"
 cp -v ./src/gui/gtk3/interface.glade /usr/share/kalibrator/
