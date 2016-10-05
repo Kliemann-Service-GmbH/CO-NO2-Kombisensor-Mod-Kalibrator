@@ -15,8 +15,6 @@ systemctl stop kalibrator.service
 cargo build --release
 # Kopiere neu erstellte Binaries und Assets in das Dateisystem
 cp -v ./target/release/kalibrator /usr/bin/kalibrator
-## Erstelle Assets Verzeichnis
-[ -d "/usr/share/kalibrator/" ] || mkdir "/usr/share/kalibrator/"
-cp -v ./src/gui/gtk3/interface.glade /usr/share/kalibrator/
+
 # Starte Instanz wieder
 systemctl start kalibrator.service
