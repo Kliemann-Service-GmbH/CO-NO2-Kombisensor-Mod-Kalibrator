@@ -72,11 +72,13 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
       </row>
     </data>
   </object>
-  <object class="GtkWindow" id="main_window">
+  <object class="GtkApplicationWindow" id="main_window">
     <property name="width_request">1024</property>
     <property name="height_request">600</property>
     <property name="can_focus">False</property>
     <property name="border_width">10</property>
+    <property name="default_width">1024</property>
+    <property name="default_height">600</property>
     <child>
       <object class="GtkStack" id="stack_main">
         <property name="visible">True</property>
@@ -121,7 +123,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_left">150</property>
                     <property name="label" translatable="yes">Modbus Adresse</property>
                   </object>
                   <packing>
@@ -134,7 +135,9 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                   <object class="GtkSpinButton">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="text" translatable="yes">1</property>
                     <property name="adjustment">adjustment_modbus_address</property>
+                    <property name="value">1</property>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -147,7 +150,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="adjustment">adjustment_modbus_address</property>
-                    <property name="round_digits">1</property>
+                    <property name="round_digits">0</property>
                     <property name="digits">0</property>
                   </object>
                   <packing>
@@ -163,7 +166,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="margin_right">150</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -186,7 +188,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                   <object class="GtkSwitch" id="button_enable_no2">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="margin_left">150</property>
                     <property name="active">True</property>
                   </object>
                   <packing>
@@ -214,7 +215,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="margin_right">150</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -237,7 +237,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                   <object class="GtkSwitch" id="button_enable_co">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="margin_left">150</property>
                     <property name="active">True</property>
                   </object>
                   <packing>
@@ -265,7 +264,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="margin_right">150</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -296,8 +294,8 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                 <property name="height_request">80</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_right">50</property>
                 <property name="orientation">vertical</property>
+                <property name="homogeneous">True</property>
                 <property name="layout_style">expand</property>
                 <child>
                   <object class="GtkButton" id="button_calibrator_cancel">
@@ -338,13 +336,10 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">80</property>
-                <property name="margin_right">80</property>
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_left">150</property>
                     <property name="label" translatable="yes">Aktueller ADC Wert:</property>
                   </object>
                   <packing>
@@ -390,7 +385,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="margin_left">50</property>
                 <property name="label" translatable="yes">1. Sensor Bereich</property>
               </object>
               <packing>
@@ -403,8 +397,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">80</property>
-                <property name="margin_right">80</property>
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
@@ -457,8 +449,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">80</property>
-                <property name="margin_right">80</property>
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
@@ -512,8 +502,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">end</property>
-                <property name="margin_left">80</property>
-                <property name="margin_right">80</property>
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
@@ -553,7 +541,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="margin_right">50</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -573,7 +560,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="margin_left">50</property>
                 <property name="label" translatable="yes">2. Nullpunkt Abgleich</property>
               </object>
               <packing>
@@ -586,13 +572,10 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">80</property>
-                <property name="margin_right">80</property>
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_left">100</property>
                     <property name="label" translatable="yes">Konzentration Nullgas</property>
                   </object>
                   <packing>
@@ -605,6 +588,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                   <object class="GtkSpinButton">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="text" translatable="yes">0</property>
                     <property name="adjustment">adjustment_sensor_concentration_at_nullgas</property>
                   </object>
                   <packing>
@@ -633,7 +617,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="margin_right">150</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -653,7 +636,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="margin_left">50</property>
                 <property name="label" translatable="yes">3. Messgas Abgleich</property>
               </object>
               <packing>
@@ -666,13 +648,10 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">80</property>
-                <property name="margin_right">80</property>
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_left">100</property>
                     <property name="label" translatable="yes">Konzentration Messgas</property>
                   </object>
                   <packing>
@@ -685,6 +664,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                   <object class="GtkSpinButton">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="text" translatable="yes">0</property>
                     <property name="adjustment">adjustment_sensor_concentration_at_messgas</property>
                   </object>
                   <packing>
@@ -713,7 +693,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="margin_right">150</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
