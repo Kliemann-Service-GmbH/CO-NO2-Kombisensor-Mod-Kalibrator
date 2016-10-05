@@ -2,8 +2,8 @@ use gtk;
 use gtk::prelude::*;
 use gdk::enums::key;
 
-
 mod calibrator_view;
+mod static_resource;
 
 
 // Callback zum Speichern der Modbus Adresse
@@ -46,8 +46,10 @@ pub fn launch() {
         env!("CARGO_PKG_NAME")))
     });
 
+    static_resource::init();
+
     // Initialisiere alle Widgets die das Programm nutzt aus dem Glade File.
-    let builder = gtk::Builder::new_from_string(include_str!("interface.glade"));
+    let builder = gtk::Builder::new_from_resource("/com/gaswarnanlagen/xmz-mod-touch/GUI/main.ui");
     let window: gtk::Window = builder.get_object("main_window").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();

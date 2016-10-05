@@ -1,14 +1,17 @@
 [package]
 name = "kalibrator"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
 description = "Kalibrator Software für die CO/NO2 Kombisensoren mit Modbus Interface"
 documentation = "https://gaswarnanlagen.com/xmz-mod-touch"
 homepage = "https://gaswarnanlagen.com/xmz-mod-touch"
 repository = "https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod-Kalibrator.git"
 license = "GPL-2.0"
+build = "build.rs"
 
 [dependencies]
 gtk = { version = "0.1.0", features = ["v3_16"] }
 gdk = { version = "0.5.0" }
 glib = "*"
+libc = "*"
+gio = "^0"
