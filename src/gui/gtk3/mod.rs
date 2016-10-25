@@ -57,9 +57,13 @@ pub fn launch() {
     let window: gtk::Window = builder.get_object("main_window").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
+    let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
+    let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
     let spinner_discovery: gtk::Spinner = builder.get_object("spinner_discovery").unwrap();
     let button_discover: gtk::Button = builder.get_object("button_discover").unwrap();
+    let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
+    let label_co: gtk::Label = builder.get_object("label_co").unwrap();
 
     // Rufe Funktion für die Basis Fenster Konfiguration auf
     window_setup(&window);
@@ -83,11 +87,33 @@ pub fn launch() {
         callback_button_calib_no2(&builder1);
     });
 
-    // Callback 'button_calib_co' geklickt
-    let builder1 = builder.clone();
-    button_calib_co.connect_clicked(move |_| {
-        callback_button_calib_co(&builder1);
-    });
+    let button_enable_no2_clone = button_enable_no2.clone();
+    button_enable_no2.connect_clicked(clone!(window => move |_| {
+        if button_enable_no2_clone.get_active() {
+            &label_no2.set_sensitive(false);
+            &button_calib_no2.set_sensitive(false);
+        } else {
+            &label_no2.set_sensitive(true);
+            &button_calib_no2.set_sensitive(true);
+        }
+    }));
+
+    let button_enable_co_clone = button_enable_co.clone();
+    button_enable_co.connect_clicked(clone!(window => move |_| {
+        if button_enable_co_clone.get_active() {
+            &label_co.set_sensitive(false);
+            &button_calib_co.set_sensitive(false);
+        } else {
+            &label_co.set_sensitive(true);
+            &button_calib_co.set_sensitive(true);
+        }
+    }));
+
+    // // Callback 'button_calib_co' geklickt
+    // let builder1 = builder.clone();
+    // button_calib_co.connect_clicked(move |_| {
+    //     callback_button_calib_co(&builder1);
+    // });
 
     // Beende Programm wenn das Fenster geschlossen wurde
     window.connect_delete_event(|_, _| {
