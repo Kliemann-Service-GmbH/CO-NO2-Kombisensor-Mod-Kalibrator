@@ -5,10 +5,14 @@ use gdk::enums::key;
 mod calibrator_view;
 mod static_resource;
 
+// Callback Sensor Erkennen, Discovery
+fn callback_button_discover(spinner_discovery: &gtk::Spinner) {
+    spinner_discovery.start();
+}
 
 // Callback zum Speichern der Modbus Adresse
 fn callback_button_save_modbus_address(builder: &gtk::Builder) {
-    println!("Click click {:?}", builder);
+    println!("Modbus Adresse speichern {:?}", builder);
 }
 // Callback Kalibrieren Button NO2 geklickt
 fn callback_button_calib_no2(builder: &gtk::Builder) {
@@ -54,11 +58,18 @@ pub fn launch() {
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
+    let spinner_discovery: gtk::Spinner = builder.get_object("spinner_discovery").unwrap();
+    let button_discover: gtk::Button = builder.get_object("button_discover").unwrap();
 
     // Rufe Funktion für die Basis Fenster Konfiguration auf
     window_setup(&window);
 
     window.show_all();
+
+    // Callback Senor erkennen, Discovery
+    button_discover.connect_clicked(clone!(window => move |_| {
+        callback_button_discover(&spinner_discovery);
+    }));
 
     // Callback 'button_save_modbus_address' geklickt
     let builder1 = builder.clone();
