@@ -2,7 +2,6 @@ extern crate gio;
 extern crate glib;
 extern crate libc;
 
-use std;
 
 pub fn init() {
     let resource_data: &[u8] = &include_bytes!("../../resources/resources.gresource")[..];

@@ -1,6 +1,7 @@
 use gtk;
 use gtk::prelude::*;
 use gdk::enums::key;
+use commands;
 
 mod calibrator_view;
 mod static_resource;
@@ -71,7 +72,7 @@ pub fn launch() {
     window.show_all();
 
     // Callback Senor erkennen, Discovery
-    button_discover.connect_clicked(clone!(window => move |_| {
+    button_discover.connect_clicked(clone!(spinner_discovery => move |_| {
         callback_button_discover(&spinner_discovery);
     }));
 
@@ -87,33 +88,65 @@ pub fn launch() {
         callback_button_calib_no2(&builder1);
     });
 
-    let button_enable_no2_clone = button_enable_no2.clone();
-    button_enable_no2.connect_clicked(clone!(window => move |_| {
-        if button_enable_no2_clone.get_active() {
-            &label_no2.set_sensitive(false);
-            &button_calib_no2.set_sensitive(false);
-        } else {
-            &label_no2.set_sensitive(true);
-            &button_calib_no2.set_sensitive(true);
+    button_enable_no2.connect_clicked(clone!(button_enable_no2, button_calib_no2 => move |_| {
+        if button_enable_no2.get_active() {
+            match commands::enable_no2(false) {
+                Ok(_) => {
+                    // Deaktiviere NO2 Sensor
+                    &label_no2.set_sensitive(false);
+                    &button_calib_no2.set_sensitive(false);
+                }
+                Err(_) => {
+                    button_enable_no2.set_active(false);
+                }
+            }
+        } else { // Knopf war gedrueckt, Sensor muss wieder aktiviert werden.
+            match commands::enable_no2(true) {
+                Ok(_) => {
+                    // Deaktiviere NO2 Sensor
+                    &label_no2.set_sensitive(true);
+                    &button_calib_no2.set_sensitive(true);
+                }
+                Err(_) => {
+                    button_enable_no2.set_active(true);
+                }
+            }
         }
     }));
 
-    let button_enable_co_clone = button_enable_co.clone();
-    button_enable_co.connect_clicked(clone!(window => move |_| {
-        if button_enable_co_clone.get_active() {
-            &label_co.set_sensitive(false);
-            &button_calib_co.set_sensitive(false);
-        } else {
-            &label_co.set_sensitive(true);
-            &button_calib_co.set_sensitive(true);
+    button_enable_co.connect_clicked(clone!(button_enable_co, button_calib_co => move |_| {
+        if button_enable_co.get_active() {
+            match commands::enable_co(false) {
+                Ok(_) => {
+                    // Deaktiviere NO2 Sensor
+                    &label_co.set_sensitive(false);
+                    &button_calib_co.set_sensitive(false);
+                }
+                Err(_) => {
+                    button_enable_co.set_active(false);
+                }
+            }
+        } else { // Knopf war gedrueckt, Sensor muss wieder aktiviert werden.
+            match commands::enable_co(true) {
+                Ok(_) => {
+                    // Deaktiviere NO2 Sensor
+                    &label_co.set_sensitive(true);
+                    &button_calib_co.set_sensitive(true);
+                }
+                Err(_) => {
+                    button_enable_co.set_active(true);
+                }
+            }
         }
     }));
 
-    // // Callback 'button_calib_co' geklickt
-    // let builder1 = builder.clone();
-    // button_calib_co.connect_clicked(move |_| {
-    //     callback_button_calib_co(&builder1);
-    // });
+    button_calib_co.connect_clicked(clone!(builder => move |_| {
+        callback_button_calib_co(&builder);
+    }));
+
+    button_calib_no2.connect_clicked(clone!(builder => move |_| {
+        callback_button_calib_no2(&builder);
+    }));
 
     // Beende Programm wenn das Fenster geschlossen wurde
     window.connect_delete_event(|_, _| {
