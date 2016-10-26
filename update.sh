@@ -15,6 +15,8 @@ systemctl stop kalibrator.service
 cargo build --release
 # Kopiere neu erstellte Binaries und Assets in das Dateisystem
 cp -v ./target/release/kalibrator /usr/bin/kalibrator
+# Bibliotheken installieren
+cp -rv ./target/release/build/libmodbus-sys-*/out/lib/* /usr/lib/
 
 # Starte Instanz wieder
 systemctl start kalibrator.service

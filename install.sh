@@ -11,6 +11,8 @@ set -o errexit -o nounset
 
 # Programmdateien installieren
 cp -v ./target/release/kalibrator /usr/bin/kalibrator
+# Bibliotheken installieren
+cp -rv ./target/release/build/libmodbus-sys-*/out/lib/* /usr/lib/
 
 # Systemd Unit File anlegen
 cat <<EOF | tee /etc/systemd/system/kalibrator.service
