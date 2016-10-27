@@ -1,6 +1,6 @@
 [package]
 name = "kalibrator"
-version = "0.1.2"
+version = "0.2.1"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
 description = "Kalibrator Software für die CO/NO2 Kombisensoren mit Modbus Interface"
 documentation = "https://gaswarnanlagen.com/xmz-mod-touch"
