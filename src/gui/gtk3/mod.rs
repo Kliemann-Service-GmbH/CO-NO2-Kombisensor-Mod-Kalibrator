@@ -1,3 +1,10 @@
+extern crate libc;
+extern crate glib_sys as glib_ffi;
+extern crate gtk_sys as gtk_ffi;
+extern crate gobject_sys as gobject_ffi;
+extern crate glib;
+use self::glib::translate::ToGlibPtr;
+use self::glib_ffi::gpointer;
 use commands;
 use gdk::enums::key;
 use gtk;
@@ -8,9 +15,16 @@ mod calibrator_view;
 mod static_resource;
 
 // Callback Sensor Erkennen, Discovery
-fn callback_button_discover(spinner_discovery: &gtk::Spinner) {
+fn callback_button_discover(builder: &gtk::Builder) {
+    let spinner_discovery: gtk::Spinner = builder.get_object("spinner_discovery").unwrap();
+    let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
+    let label_info_bar_message: gtk::Label = builder.get_object("label_info_bar_message").unwrap();
+
     if Path::new("/dev/ttyUSB0").exists() {
         spinner_discovery.start();
+    } else {
+        label_info_bar_message.set_text("Serielle Schnittstelle nicht gefunden");
+        info_bar.show();
     }
 }
 
@@ -83,27 +97,41 @@ pub fn launch() {
 
     static_resource::init();
 
+    // Deaktivier Animationen. Behebt den Bug das der InfoBar nur einmal angezeigt wird, oder
+    // nur angezeigt wird, wenn das Fenster kein Fokus hat.
+    // http://stackoverflow.com/questions/39271852/infobar-only-shown-on-window-change/39273438#39273438
+    unsafe{
+        self::gobject_ffi::g_object_set (gtk_ffi::gtk_settings_get_default () as gpointer,
+        "gtk-enable-animations".to_glib_none().0, glib_ffi::GFALSE, ::std::ptr::null::<libc::c_void>());
+    }
+
     // Initialisiere alle Widgets die das Programm nutzt aus dem Glade File.
     let builder = gtk::Builder::new_from_resource("/com/gaswarnanlagen/xmz-mod-touch/GUI/main.ui");
-    let window: gtk::Window = builder.get_object("main_window").unwrap();
-    let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
-    let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
-    let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
-    let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
-    let spinner_discovery: gtk::Spinner = builder.get_object("spinner_discovery").unwrap();
+    let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
     let button_discover: gtk::Button = builder.get_object("button_discover").unwrap();
-    let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
+    let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
+    let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
+    let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
+    let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
     let label_co: gtk::Label = builder.get_object("label_co").unwrap();
+    let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
+    let window: gtk::Window = builder.get_object("main_window").unwrap();
 
     // Rufe Funktion für die Basis Fenster Konfiguration auf
     window_setup(&window);
 
     window.show_all();
 
+    info_bar.hide();
+    // Close callback
+    info_bar.connect_response(clone!(info_bar => move |info_bar, _| {
+        info_bar.hide();
+    }));
+
     // Callback Senor erkennen, Discovery
-    button_discover.connect_clicked(clone!(spinner_discovery => move |_| {
-        callback_button_discover(&spinner_discovery);
+    button_discover.connect_clicked(clone!(builder => move |_| {
+        callback_button_discover(&builder);
     }));
 
     // Callback 'button_save_modbus_address' geklickt
