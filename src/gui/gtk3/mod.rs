@@ -1,14 +1,17 @@
+use commands;
+use gdk::enums::key;
 use gtk;
 use gtk::prelude::*;
-use gdk::enums::key;
-use commands;
+use std::path::Path;
 
 mod calibrator_view;
 mod static_resource;
 
 // Callback Sensor Erkennen, Discovery
 fn callback_button_discover(spinner_discovery: &gtk::Spinner) {
-    spinner_discovery.start();
+    if Path::new("/dev/ttyUSB0").exists() {
+        spinner_discovery.start();
+    }
 }
 
 // Gemeinsamer Callback
@@ -36,7 +39,6 @@ fn callback_button_enable_sensor(button_enable: &gtk::ToggleButton, button_calib
             }
         }
     }
-
 }
 
 // Callback zum Speichern der Modbus Adresse
