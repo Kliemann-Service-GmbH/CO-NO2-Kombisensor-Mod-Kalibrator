@@ -15,4 +15,5 @@ gdk = { version = "0.5.0" }
 glib = "*"
 libc = "*"
 gio = "^0"
-libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
+libmodbus-rs = { version = "0.3.1", git = "https://github.com/zzeroo/libmodbus-rs.git" }
+xmz_server = { git = "https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git", branch = "development" }
