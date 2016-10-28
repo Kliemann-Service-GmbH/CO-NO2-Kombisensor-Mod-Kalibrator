@@ -18,5 +18,5 @@ gobject-sys = "*"
 gtk = { version = "0.1.0", features = ["v3_16"] }
 gtk-sys = "*"
 libc = "*"
-libmodbus-rs = { version = "0.3.1", git = "https://github.com/zzeroo/libmodbus-rs.git" }
-xmz_server = { git = "https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git", branch = "development" }
+libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
+xmz_server = { git = "https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git" }

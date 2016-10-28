@@ -4,13 +4,17 @@ extern crate gtk;
 extern crate libmodbus_rs;
 extern crate xmz_server;
 
-
-
 #[macro_use] mod macros;
 mod gui {
     pub mod gtk3;
 }
 mod commands;
+mod co_no2_kombisensor {
+    pub use self::kombisensor::Kombisensor;
+
+    pub mod kombisensor;
+    pub mod sensor;
+}
 
 
 fn main() {
