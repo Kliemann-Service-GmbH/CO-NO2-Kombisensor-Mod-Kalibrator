@@ -4,6 +4,8 @@ extern crate gtk_sys as gtk_ffi;
 extern crate gobject_sys as gobject_ffi;
 extern crate glib;
 
+use std::error::Error;
+use configuration::Configuration;
 use self::glib::translate::ToGlibPtr;
 use self::glib_ffi::gpointer;
 use commands;
@@ -12,24 +14,29 @@ use gtk;
 use gtk::prelude::*;
 use std::path::Path;
 use co_no2_kombisensor::*;
-use std::sync::{Arc, Weak};
+use std::sync::{Arc, Mutex};
 
 mod calibrator_view;
 mod static_resource;
 
 
 // Callback Sensor Erkennen, Discovery
-fn callback_button_discover(builder: &gtk::Builder, kombisensor: Weak<Kombisensor>) {
+fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>, configuration: &Arc<Mutex<Configuration>>) {
     let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
     let label_info_bar_message: gtk::Label = builder.get_object("label_info_bar_message").unwrap();
     let spin_button_modbus_address: gtk::SpinButton = builder.get_object("spin_button_modbus_address").unwrap();
+    // Get config from Arc<Mutex<>>
+    let configuration = configuration.lock().unwrap();
 
-    if Path::new("/dev/ttyUSB0").exists() {
-        // let _= commands::kombisensor_from_modbus(kombisensor);
-        spin_button_modbus_address.set_value(222 as f64);
-    } else {
-        label_info_bar_message.set_text("Serielle Schnittstelle nicht gefunden");
-        info_bar.show();
+    match configuration.is_valid() {
+        Ok(_) => {
+            let _= commands::kombisensor_from_modbus(kombisensor);
+            spin_button_modbus_address.set_value(kombisensor.lock().unwrap().modbus_address as f64);
+        }
+        Err(err) => {
+            label_info_bar_message.set_text(err.description());
+            info_bar.show();
+        }
     }
 }
 
@@ -48,7 +55,7 @@ fn callback_button_enable_sensor(builder: &gtk::Builder, button: &gtk::ToggleBut
     let sensor_status = !button.get_active();
 
     // Wenn die Serielle Schnittstelle nicht exisitert, gib ein Fehler aus und mache ansonnsten nichts
-    if !Path::new("/dev/ttyUSB0").exists() {
+    if !Path::new("/dev/ttyS1").exists() {
         label_info_bar_message.set_text("Serielle Schnittstelle nicht gefunden");
         info_bar.show();
         // Button belibt nicht gedrückt, false, wenn Schnittstelle nicht OK ist.
@@ -111,7 +118,7 @@ fn window_setup(window: &gtk::Window) {
     }
 }
 
-pub fn launch() {
+pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     gtk::init().unwrap_or_else(|_| {
         panic!(format!("{}: GTK konnte nicht initalisiert werden.",
         env!("CARGO_PKG_NAME")))
@@ -128,7 +135,7 @@ pub fn launch() {
         "gtk-enable-animations".to_glib_none().0, glib_ffi::GFALSE, ::std::ptr::null::<libc::c_void>());
     }
 
-    let kombisensor = Kombisensor::new();
+    let kombisensor = Arc::new(Mutex::new(Kombisensor::new()));
 
     // Initialisiere alle Widgets die das Programm nutzt aus dem Glade File.
     let builder = gtk::Builder::new_from_resource("/com/gaswarnanlagen/xmz-mod-touch/GUI/main.ui");
@@ -153,8 +160,8 @@ pub fn launch() {
     }));
 
     // Callback Senor erkennen, Discovery
-    button_discover.connect_clicked(clone!(builder => move |_| {
-        callback_button_discover(&builder, Arc::downgrade(&kombisensor));
+    button_discover.connect_clicked(clone!(builder, kombisensor, configuration => move |_| {
+        callback_button_discover(&builder, &kombisensor, &configuration);
     }));
 
     // Callback 'button_save_modbus_address' geklickt

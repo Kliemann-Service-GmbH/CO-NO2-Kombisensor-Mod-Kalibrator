@@ -1,4 +1,5 @@
 
+#[derive(Debug)]
 pub struct Kombisensor {
     version: u32,
     pub modbus_address: u8,

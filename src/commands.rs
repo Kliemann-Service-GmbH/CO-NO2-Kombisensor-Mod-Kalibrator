@@ -1,16 +1,17 @@
 use libmodbus_rs::modbus::{Error, Modbus};
 use co_no2_kombisensor::kombisensor::Kombisensor;
-use std::sync::{Arc, Weak};
+use std::sync::{Arc, Mutex};
 use std::borrow::{Borrow, BorrowMut};
 
 type Result<T> = ::std::result::Result<T, Error>;
 
 
-pub fn kombisensor_from_modbus(kombisensor: Weak<Kombisensor>) -> Result<()> {
-    // Mache wieder ein Kombisensor aus dem weak pointer
-    // let kombisensor = Borrow::<Kombisensor>::borrow(&kombisensor.upgrade().unwrap());
-    // let mut kombisensor = Borrow::<Kombisensor>::borrow(&kombisensor.upgrade().unwrap());
-    // kombisensor.modbus_address = 1;
+pub fn kombisensor_from_modbus(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<()> {
+    use std::mem;
+
+    let mut kombisensor = kombisensor.lock().unwrap();
+    kombisensor.modbus_address = 123;
+
 
     Ok(())
 }
