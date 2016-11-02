@@ -9,10 +9,29 @@ type Result<T> = ::std::result::Result<T, CalibError>;
 
 /// Modbus Datenbus nach dem ersten verfügbaren Sensor scannen.
 ///
-/// Diese Funktion beginnt Ihre Suche bei der Modbus Adresse 200, default Adresse der RA-Gas Sensoren.
+/// Diese Funktion beginnt Ihre Suche bei der Modbus Adresse 247, default Adresse der RA-Gas Sensoren.
+/// Der Funktion wird ein Pointer zur Kombisensor Datenstruktur übergeben, wird ein Sensor erkannt
+/// dann wird der modbus_address Memeber der Struct gesetzt.
 ///
-pub fn kombisensor_discovery(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<u8> {
-    Ok(0)
+pub fn kombisensor_discovery(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<()> {
+    let mut kombisensor = kombisensor.lock().unwrap();
+    let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
+    try!(modbus.set_debug(true));
+
+    // Erlaubte Modbus Adressen von 1-247 durchsuchen, in umgekehrter Reihenfolge, beginnend bei 247.
+    for i in (1..248).rev() {
+        try!(modbus.set_slave(i));
+        try!(modbus.connect());
+
+        match modbus.read_registers(0, 1) {
+            Ok(_) => {
+                kombisensor.modbus_address = i as u8;
+                break;
+            }
+            Err(_) => {}, // Im Fehlerfall nichts machen
+        }
+    }
+    Ok(())
 }
 
 
@@ -25,15 +44,15 @@ pub fn kombisensor_from_modbus(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<
     use std::mem;
 
     let mut kombisensor = kombisensor.lock().unwrap();
-    kombisensor.modbus_address = 123;
 
 
     Ok(())
 }
 
-pub fn enable_sensor(sensor_type: &str, sensor_state: bool) -> Result<()> {
+pub fn enable_sensor(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_type: &str, sensor_state: bool) -> Result<()> {
+    let mut kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
-    try!(modbus.set_slave(200));
+    try!(modbus.set_slave(kombisensor.modbus_address as i32));
     #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
     // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
@@ -44,7 +63,7 @@ pub fn enable_sensor(sensor_type: &str, sensor_state: bool) -> Result<()> {
         "CO" =>  try!(modbus.write_bit(0x01, sensor_state)),
         _ => {}
     }
-    
+
     Ok(())
 }
 

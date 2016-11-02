@@ -5,6 +5,7 @@ use std::fmt;
 
 #[derive(Debug)]
 pub enum CalibError {
+    DiscoveryFailed,
     SerialInterfaceUnknown,
     Modbus(libmodbus_rs::Error),
 }
@@ -12,6 +13,7 @@ pub enum CalibError {
 impl fmt::Display for CalibError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
+            CalibError::DiscoveryFailed => write!(f, "Sensor Erkennung gescheitert."),
             CalibError::SerialInterfaceUnknown => write!(f, "Serielle Schnittstelle ist nicht bekannt."),
             CalibError::Modbus(ref err) => err.fmt(f),
         }
@@ -21,6 +23,7 @@ impl fmt::Display for CalibError {
 impl Error for CalibError {
     fn description(&self) -> &str {
         match *self {
+            CalibError::DiscoveryFailed => "Es konnte kein Sensor gefunden werden",
             CalibError::SerialInterfaceUnknown => "Unbekannte serielle Schnittstelle",
             CalibError::Modbus(ref err) => err.description(),
         }
@@ -28,6 +31,7 @@ impl Error for CalibError {
 
     fn cause(&self) -> Option<&Error> {
         match *self {
+            CalibError::DiscoveryFailed => None,
             CalibError::SerialInterfaceUnknown => None,
             CalibError::Modbus(ref err) => Some(err),
         }

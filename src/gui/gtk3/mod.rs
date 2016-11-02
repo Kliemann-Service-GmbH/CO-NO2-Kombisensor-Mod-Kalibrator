@@ -22,7 +22,17 @@ mod static_resource;
 
 // Callback Sensor Erkennen, Discovery
 fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>, configuration: &Arc<Mutex<Configuration>>) {
+    let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
+    let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
+    let button_discover: gtk::Button = builder.get_object("button_discover").unwrap();
+    let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
+    let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
+    let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
+    let label_co: gtk::Label = builder.get_object("label_co").unwrap();
+    let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
+    let window: gtk::Window = builder.get_object("main_window").unwrap();
+
     let label_info_bar_message: gtk::Label = builder.get_object("label_info_bar_message").unwrap();
     let spin_button_modbus_address: gtk::SpinButton = builder.get_object("spin_button_modbus_address").unwrap();
     // Get config from Arc<Mutex<>>
@@ -30,8 +40,22 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
 
     match configuration.is_valid() {
         Ok(_) => {
-            let _= commands::kombisensor_discovery(kombisensor);
-            spin_button_modbus_address.set_value(kombisensor.lock().unwrap().modbus_address as f64);
+            match commands::kombisensor_discovery(kombisensor) {
+                Ok(_) => {
+                    // Widget aktivieren
+                    // TODO: Funktion Widget Status -> Kombisensor Struct
+                    button_calib_co.set_sensitive(true);
+                    button_calib_no2.set_sensitive(true);
+                    button_enable_co.set_sensitive(true);
+                    button_enable_no2.set_sensitive(true);
+                    button_save_modbus_address.set_sensitive(true);
+                    label_co.set_sensitive(true);
+                    label_no2.set_sensitive(true);
+
+                    spin_button_modbus_address.set_value(kombisensor.lock().unwrap().modbus_address as f64);
+                }
+                Err(err) => {}
+            };
         }
         Err(err) => {
             label_info_bar_message.set_text(err.description());
@@ -41,7 +65,7 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
 }
 
 // Gemeinsamer Callback
-fn callback_button_enable_sensor(builder: &gtk::Builder, button: &gtk::ToggleButton, configuration: &Arc<Mutex<Configuration>>) {
+fn callback_button_enable_sensor(builder: &gtk::Builder, button: &gtk::ToggleButton, kombisensor: &Arc<Mutex<Kombisensor>>, configuration: &Arc<Mutex<Configuration>>) {
     let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
     let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
@@ -69,7 +93,7 @@ fn callback_button_enable_sensor(builder: &gtk::Builder, button: &gtk::ToggleBut
 
     if button == &button_enable_co {
         sensor_type = "CO".to_string();
-        match commands::enable_sensor(&sensor_type, sensor_status) {
+        match commands::enable_sensor(&kombisensor, &sensor_type, sensor_status) {
             Ok(_) => {
                 button_calib_co.set_sensitive(sensor_status);
                 label_co.set_sensitive(sensor_status);
@@ -78,7 +102,7 @@ fn callback_button_enable_sensor(builder: &gtk::Builder, button: &gtk::ToggleBut
         }
     } else if button == &button_enable_no2 {
         sensor_type = "NO2".to_string();
-        match commands::enable_sensor(&sensor_type, sensor_status) {
+        match commands::enable_sensor(&kombisensor, &sensor_type, sensor_status) {
             Ok(_) => {
                 button_calib_no2.set_sensitive(sensor_status);
                 label_no2.set_sensitive(sensor_status);
@@ -190,12 +214,12 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
         callback_button_save_modbus_address(&builder1);
     });
 
-    button_enable_no2.connect_clicked(clone!(builder, button_enable_no2, configuration => move |_| {
-        callback_button_enable_sensor(&builder, &button_enable_no2, &configuration);
+    button_enable_no2.connect_clicked(clone!(builder, button_enable_no2, kombisensor, configuration => move |_| {
+        callback_button_enable_sensor(&builder, &button_enable_no2, &kombisensor, &configuration);
     }));
 
-    button_enable_co.connect_clicked(clone!(builder, button_enable_co, configuration => move |_| {
-        callback_button_enable_sensor(&builder, &button_enable_co, &configuration);
+    button_enable_co.connect_clicked(clone!(builder, button_enable_co, kombisensor, configuration => move |_| {
+        callback_button_enable_sensor(&builder, &button_enable_co, &kombisensor, &configuration);
     }));
 
     button_calib_co.connect_clicked(clone!(builder => move |_| {
