@@ -9,8 +9,8 @@ pub struct Configuration {
 impl Configuration {
     pub fn new() -> Self {
         Configuration {
-            // serial_interface: "/dev/ttyUSB0",
-            serial_interface: "/dev/ttyS1",
+            serial_interface: "/dev/ttyUSB0",
+            // serial_interface: "/dev/ttyS1",
         }
     }
 

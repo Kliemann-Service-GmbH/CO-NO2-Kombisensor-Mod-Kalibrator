@@ -41,7 +41,7 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
 }
 
 // Gemeinsamer Callback
-fn callback_button_enable_sensor(builder: &gtk::Builder, button: &gtk::ToggleButton) {
+fn callback_button_enable_sensor(builder: &gtk::Builder, button: &gtk::ToggleButton, configuration: &Arc<Mutex<Configuration>>) {
     let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
     let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
@@ -50,17 +50,21 @@ fn callback_button_enable_sensor(builder: &gtk::Builder, button: &gtk::ToggleBut
     let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
     let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
     let label_info_bar_message: gtk::Label = builder.get_object("label_info_bar_message").unwrap();
+    // Get config from Arc<Mutex<>>
+    let configuration = configuration.lock().unwrap();
 
     let mut sensor_type: String = String::new();
     let sensor_status = !button.get_active();
 
-    // Wenn die Serielle Schnittstelle nicht exisitert, gib ein Fehler aus und mache ansonnsten nichts
-    if !Path::new("/dev/ttyS1").exists() {
-        label_info_bar_message.set_text("Serielle Schnittstelle nicht gefunden");
-        info_bar.show();
-        // Button belibt nicht gedrückt, false, wenn Schnittstelle nicht OK ist.
-        button.set_active(false);
-        return;
+    // Checke Serielles Interface
+    match configuration.is_valid() {
+        Ok(_) => {}
+        Err(err) => {
+            label_info_bar_message.set_text(err.description());
+            info_bar.show();
+            button.set_active(false);
+            return;
+        }
     }
 
     if button == &button_enable_co {
@@ -146,7 +150,20 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
+    let label_co: gtk::Label = builder.get_object("label_co").unwrap();
+    let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
     let window: gtk::Window = builder.get_object("main_window").unwrap();
+
+    // Bei Programstart werden alle Button und Label erstmal auf nicht sensitive gestellt.
+    // Erst wenn eine Modbus Adresse gefunden wurde, discovery, werden die jeweiligen Widgets aktiv.
+    button_calib_co.set_sensitive(false);
+    button_calib_no2.set_sensitive(false);
+    button_enable_co.set_sensitive(false);
+    button_enable_no2.set_sensitive(false);
+    label_co.set_sensitive(false);
+    label_no2.set_sensitive(false);
+    button_save_modbus_address.set_sensitive(false);
+
 
     // Rufe Funktion für die Basis Fenster Konfiguration auf
     window_setup(&window);
@@ -170,12 +187,12 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
         callback_button_save_modbus_address(&builder1);
     });
 
-    button_enable_no2.connect_clicked(clone!(builder, button_enable_no2 => move |_| {
-        callback_button_enable_sensor(&builder, &button_enable_no2);
+    button_enable_no2.connect_clicked(clone!(builder, button_enable_no2, configuration => move |_| {
+        callback_button_enable_sensor(&builder, &button_enable_no2, &configuration);
     }));
 
-    button_enable_co.connect_clicked(clone!(builder, button_enable_co => move |_| {
-        callback_button_enable_sensor(&builder, &button_enable_co);
+    button_enable_co.connect_clicked(clone!(builder, button_enable_co, configuration => move |_| {
+        callback_button_enable_sensor(&builder, &button_enable_co, &configuration);
     }));
 
     button_calib_co.connect_clicked(clone!(builder => move |_| {
