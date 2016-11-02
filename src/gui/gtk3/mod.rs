@@ -42,6 +42,10 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
         Ok(_) => {
             match commands::kombisensor_discovery(kombisensor) {
                 Ok(_) => {
+                    // Wird ein Sensor erkannt dann wird als nächstes die Kombisensor Datenstruktur
+                    // mit den Daten der echten Hardware gefüllt.
+                    commands::kombisensor_from_modbus(&kombisensor);
+
                     // Widget aktivieren
                     // TODO: Funktion Widget Status -> Kombisensor Struct
                     button_calib_co.set_sensitive(true);
@@ -52,7 +56,8 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
                     label_co.set_sensitive(true);
                     label_no2.set_sensitive(true);
 
-                    spin_button_modbus_address.set_value(kombisensor.lock().unwrap().modbus_address as f64);
+                    spin_button_modbus_address.set_value(kombisensor.lock().unwrap().get_modbus_address() as f64);
+                    println!("{:#?}", kombisensor);
                 }
                 Err(err) => {}
             };

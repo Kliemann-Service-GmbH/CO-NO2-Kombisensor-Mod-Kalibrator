@@ -1,15 +1,73 @@
+use co_no2_kombisensor::sensor::{Sensor, SensorType};
 
 #[derive(Debug)]
 pub struct Kombisensor {
-    version: u32,
-    pub modbus_address: u8,
+    version: String,
+    modbus_address: u8,
+    sensors: Vec<Sensor>,
 }
 
 impl Kombisensor {
     pub fn new() -> Self {
         Kombisensor {
-            version: 0,
+            version: "0.0.0".to_string(),
             modbus_address: 0,
+            sensors: vec![],
+        }
+    }
+
+// GETTER
+    /// Liefert die Versionsnummer
+    pub fn get_version(&self) -> String {
+        self.version.clone()
+    }
+
+    /// Liefert die Modbus Adresse
+    pub fn get_modbus_address(&self) -> u8 {
+        self.modbus_address
+    }
+
+// SETTER
+    /// Setzt die Versionsnummer
+    pub fn set_version(&mut self, version: String) {
+        self.version = version;
+    }
+
+    /// Setzt die Modbus Adresse
+    pub fn set_modbus_address(&mut self, modbus_address: u8) {
+        self.modbus_address = modbus_address
+    }
+
+//MISC
+    /// Parsed den übergebenen Vector aus Bytes und füllt die Member der eigenen Datenstruktur
+    ///
+    pub fn parse_modbus_registers(&mut self, modbus_registers: Vec<u16>) {
+        let version = format!("{}.{}.{}", modbus_registers[0], modbus_registers[1], modbus_registers[2]);
+        let sensor1_enabled = modbus_registers[19];
+        let sensor2_enabled = modbus_registers[29];
+
+        self.set_version(version);
+
+        if sensor1_enabled == 1 {
+            println!("Sensor1 gefunden");
+            let mut sensor = Sensor::new(SensorType::RaGasNO2);
+            sensor.set_number(modbus_registers[10]);
+            sensor.set_adc_value(modbus_registers[11]);
+            sensor.set_adc_at_nullgas(modbus_registers[12]);
+            sensor.set_adc_at_messgas(modbus_registers[13]);
+            sensor.set_si(modbus_registers[14]);
+            self.sensors.push(sensor);
+        }
+
+        if sensor2_enabled == 1 {
+            println!("Sensor2 gefunden");
+            let mut sensor = Sensor::new(SensorType::RaGasCO);
+            sensor.set_number(modbus_registers[20]);
+            sensor.set_adc_value(modbus_registers[21]);
+            sensor.set_adc_at_nullgas(modbus_registers[22]);
+            sensor.set_adc_at_messgas(modbus_registers[23]);
+            sensor.set_si(modbus_registers[24]);
+            self.sensors.push(sensor);
         }
     }
 }

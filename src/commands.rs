@@ -25,7 +25,7 @@ pub fn kombisensor_discovery(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<()
 
         match modbus.read_registers(0, 1) {
             Ok(_) => {
-                kombisensor.modbus_address = i as u8;
+                kombisensor.set_modbus_address(i as u8);
                 break;
             }
             Err(_) => {}, // Im Fehlerfall nichts machen
@@ -44,7 +44,16 @@ pub fn kombisensor_from_modbus(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<
     use std::mem;
 
     let mut kombisensor = kombisensor.lock().unwrap();
-
+    let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
+    println!("{:?}", kombisensor.get_modbus_address());
+    try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
+    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
+    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
+    try!(modbus.set_debug(true));
+    try!(modbus.connect());
+    try!(modbus.read_registers(0, 30).map(|registers| {
+        kombisensor.parse_modbus_registers(registers);
+    }));
 
     Ok(())
 }
@@ -52,7 +61,7 @@ pub fn kombisensor_from_modbus(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<
 pub fn enable_sensor(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_type: &str, sensor_state: bool) -> Result<()> {
     let mut kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
-    try!(modbus.set_slave(kombisensor.modbus_address as i32));
+    try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
     #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
     // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
