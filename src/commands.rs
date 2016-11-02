@@ -1,11 +1,26 @@
-use libmodbus_rs::modbus::{Error, Modbus};
+use calib_error::CalibError;
 use co_no2_kombisensor::kombisensor::Kombisensor;
+use libmodbus_rs::modbus::Modbus;
+// use std::borrow::{Borrow, BorrowMut};
 use std::sync::{Arc, Mutex};
-use std::borrow::{Borrow, BorrowMut};
 
-type Result<T> = ::std::result::Result<T, Error>;
+type Result<T> = ::std::result::Result<T, CalibError>;
 
 
+/// Modbus Datenbus nach dem ersten verfügbaren Sensor scannen.
+///
+/// Diese Funktion beginnt Ihre Suche bei der Modbus Adresse 200, default Adresse der RA-Gas Sensoren.
+///
+pub fn kombisensor_discovery(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<u8> {
+    Ok(0)
+}
+
+
+/// Kombisensor Datenstruktur füllen
+///
+/// Diese Funktion liest alle Register des Kombisensors aus und speichert die Werte in der
+/// Kombisensor Datenstruktur.
+///
 pub fn kombisensor_from_modbus(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<()> {
     use std::mem;
 
@@ -22,17 +37,14 @@ pub fn enable_sensor(sensor_type: &str, sensor_state: bool) -> Result<()> {
     #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
     // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
+    try!(modbus.connect());
 
-    match modbus.connect() {
-        Err(err) => return Err(err),
-        Ok(_) => {
-            match sensor_type {
-                "NO2" => { try!(modbus.write_bit(0x00, sensor_state)); }
-                "CO" => { try!(modbus.write_bit(0x01, sensor_state)); }
-                _ => {}
-            }
-        }
+    match sensor_type {
+        "NO2" => try!(modbus.write_bit(0x00, sensor_state)),
+        "CO" =>  try!(modbus.write_bit(0x01, sensor_state)),
+        _ => {}
     }
+    
     Ok(())
 }
 

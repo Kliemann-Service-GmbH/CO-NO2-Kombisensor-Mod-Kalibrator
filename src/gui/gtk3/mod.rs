@@ -30,7 +30,7 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
 
     match configuration.is_valid() {
         Ok(_) => {
-            let _= commands::kombisensor_from_modbus(kombisensor);
+            let _= commands::kombisensor_discovery(kombisensor);
             spin_button_modbus_address.set_value(kombisensor.lock().unwrap().modbus_address as f64);
         }
         Err(err) => {
@@ -139,6 +139,9 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
         "gtk-enable-animations".to_glib_none().0, glib_ffi::GFALSE, ::std::ptr::null::<libc::c_void>());
     }
 
+    // Die Kombisensor Datenstruktur ist die Softwarebescheibung des Sensors an den der Kalibrator
+    // angeschlossen ist. Mit dessen Funktionen und Attributen werden dann die verschiedenen
+    // Widgets der GUI gefüllt.
     let kombisensor = Arc::new(Mutex::new(Kombisensor::new()));
 
     // Initialisiere alle Widgets die das Programm nutzt aus dem Glade File.
