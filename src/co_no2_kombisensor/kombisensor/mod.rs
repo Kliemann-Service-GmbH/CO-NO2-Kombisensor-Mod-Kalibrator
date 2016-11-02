@@ -49,24 +49,26 @@ impl Kombisensor {
         self.set_version(version);
 
         if sensor1_enabled == 1 {
-            println!("Sensor1 gefunden");
             let mut sensor = Sensor::new(SensorType::RaGasNO2);
             sensor.set_number(modbus_registers[10]);
             sensor.set_adc_value(modbus_registers[11]);
-            sensor.set_adc_at_nullgas(modbus_registers[12]);
-            sensor.set_adc_at_messgas(modbus_registers[13]);
-            sensor.set_si(modbus_registers[14]);
+            sensor.set_min_value(modbus_registers[12]);
+            sensor.set_max_value(modbus_registers[13]);
+            sensor.set_adc_at_nullgas(modbus_registers[14]);
+            sensor.set_adc_at_messgas(modbus_registers[15]);
+            sensor.set_si(modbus_registers[16]);
             self.sensors.push(sensor);
         }
 
         if sensor2_enabled == 1 {
-            println!("Sensor2 gefunden");
             let mut sensor = Sensor::new(SensorType::RaGasCO);
             sensor.set_number(modbus_registers[20]);
             sensor.set_adc_value(modbus_registers[21]);
-            sensor.set_adc_at_nullgas(modbus_registers[22]);
-            sensor.set_adc_at_messgas(modbus_registers[23]);
-            sensor.set_si(modbus_registers[24]);
+            sensor.set_min_value(modbus_registers[22]);
+            sensor.set_max_value(modbus_registers[23]);
+            sensor.set_adc_at_nullgas(modbus_registers[24]);
+            sensor.set_adc_at_messgas(modbus_registers[25]);
+            sensor.set_si(modbus_registers[26]);
             self.sensors.push(sensor);
         }
     }

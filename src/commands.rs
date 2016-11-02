@@ -16,6 +16,8 @@ type Result<T> = ::std::result::Result<T, CalibError>;
 pub fn kombisensor_discovery(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<()> {
     let mut kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
+    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
+    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
 
     // Erlaubte Modbus Adressen von 1-247 durchsuchen, in umgekehrter Reihenfolge, beginnend bei 247.
@@ -45,11 +47,12 @@ pub fn kombisensor_from_modbus(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<
 
     let mut kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
-    println!("{:?}", kombisensor.get_modbus_address());
+
     try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
     #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
     // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
+
     try!(modbus.connect());
     try!(modbus.read_registers(0, 30).map(|registers| {
         kombisensor.parse_modbus_registers(registers);
