@@ -57,7 +57,7 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
                     label_no2.set_sensitive(true);
 
                     spin_button_modbus_address.set_value(kombisensor.lock().unwrap().get_modbus_address() as f64);
-                    println!("{:#?}", kombisensor);
+                    //println!("{:#?}", kombisensor);
                 }
                 Err(err) => {}
             };
@@ -122,12 +122,12 @@ fn callback_button_save_modbus_address(builder: &gtk::Builder) {
     println!("Modbus Adresse speichern {:?}", builder);
 }
 // Callback Kalibrieren Button NO2 geklickt
-fn callback_button_calib_no2(builder: &gtk::Builder) {
-    calibrator_view::launch("NO2", &builder);
+fn callback_button_calib_no2(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
+    calibrator_view::launch("NO2", &builder, &kombisensor);
 }
 // Callback Kalibrieren Button CO geklickt
-fn callback_button_calib_co(builder: &gtk::Builder) {
-    calibrator_view::launch("CO", &builder);
+fn callback_button_calib_co(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
+    calibrator_view::launch("CO", &builder, &kombisensor);
 }
 
 // Basic Setup des Fensters
@@ -227,12 +227,12 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
         callback_button_enable_sensor(&builder, &button_enable_co, &kombisensor, &configuration);
     }));
 
-    button_calib_co.connect_clicked(clone!(builder => move |_| {
-        callback_button_calib_co(&builder);
+    button_calib_co.connect_clicked(clone!(builder, kombisensor => move |_| {
+        callback_button_calib_co(&builder, &kombisensor);
     }));
 
-    button_calib_no2.connect_clicked(clone!(builder => move |_| {
-        callback_button_calib_no2(&builder);
+    button_calib_no2.connect_clicked(clone!(builder, kombisensor => move |_| {
+        callback_button_calib_no2(&builder, &kombisensor);
     }));
 
     // Beende Programm wenn das Fenster geschlossen wurde
