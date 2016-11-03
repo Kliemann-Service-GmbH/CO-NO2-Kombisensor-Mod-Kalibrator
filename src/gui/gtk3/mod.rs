@@ -31,13 +31,14 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
     let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
     let label_co: gtk::Label = builder.get_object("label_co").unwrap();
     let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
-    let window: gtk::Window = builder.get_object("main_window").unwrap();
-
     let label_info_bar_message: gtk::Label = builder.get_object("label_info_bar_message").unwrap();
     let spin_button_modbus_address: gtk::SpinButton = builder.get_object("spin_button_modbus_address").unwrap();
+    let label_kombisensor_version: gtk::Label = builder.get_object("label_kombisensor_version").unwrap();
+    let window: gtk::Window = builder.get_object("main_window").unwrap();
+
     // Get config from Arc<Mutex<>>
     let configuration = configuration.lock().unwrap();
-
+    // Wenn die Serielle Schnittstelle existiert dann mache weiter
     match configuration.is_valid() {
         Ok(_) => {
             match commands::kombisensor_discovery(kombisensor) {
@@ -45,6 +46,9 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
                     // Wird ein Sensor erkannt dann wird als nächstes die Kombisensor Datenstruktur
                     // mit den Daten der echten Hardware gefüllt.
                     commands::kombisensor_from_modbus(&kombisensor);
+
+                    // Label "Firmware Version" füllen
+                    label_kombisensor_version.set_text(&kombisensor.lock().unwrap().get_version());
 
                     // Widget aktivieren
                     // TODO: Funktion Widget Status -> Kombisensor Struct
@@ -57,7 +61,7 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
                     label_no2.set_sensitive(true);
 
                     spin_button_modbus_address.set_value(kombisensor.lock().unwrap().get_modbus_address() as f64);
-                    //println!("{:#?}", kombisensor);
+                    println!("{:#?}", kombisensor);
                 }
                 Err(err) => {}
             };
@@ -214,10 +218,9 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     }));
 
     // Callback 'button_save_modbus_address' geklickt
-    let builder1 = builder.clone();
-    button_save_modbus_address.connect_clicked(move |_| {
-        callback_button_save_modbus_address(&builder1);
-    });
+    button_save_modbus_address.connect_clicked(clone!(builder => move |_| {
+        callback_button_save_modbus_address(&builder);
+    }));
 
     button_enable_no2.connect_clicked(clone!(builder, button_enable_no2, kombisensor, configuration => move |_| {
         callback_button_enable_sensor(&builder, &button_enable_no2, &kombisensor, &configuration);
