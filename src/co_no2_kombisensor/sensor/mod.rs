@@ -1,3 +1,4 @@
+/// Aktuelle Rust Representation des CO-NO2 Kombisensors (Firmware Version: 0.11.1)
 
 #[derive(Debug)]
 pub enum SensorType {
@@ -6,8 +7,15 @@ pub enum SensorType {
 }
 
 #[derive(Debug)]
+pub enum SI {
+    none,
+    ppm,
+    UEG,
+    Vol,
+}
+
+#[derive(Debug)]
 pub struct Sensor {
-    sensor_type: SensorType,
     number: u16,
     adc_value: u16,
     min_value: u16,
@@ -16,13 +24,13 @@ pub struct Sensor {
     adc_at_messgas: u16,
     concentration_nullgas: u16,
     concentration_messgas: u16,
-    si: u16,
+    sensor_type: SensorType, // Nicht direkt in der Kombisensor Firmware (coil 0 für Sensor1 und 16 für Sensor2)
+    si: SI, // Nicht direkt in der Kombisensor Firmware/ Modbus Datenstruktur (coils 1..3 für Sensor1 usw.)
 }
 
 impl Sensor {
     pub fn new(sensor_type: SensorType) -> Self {
         Sensor {
-            sensor_type: sensor_type,
             number: 0,
             adc_value: 0,
             min_value: 0,
@@ -31,7 +39,8 @@ impl Sensor {
             adc_at_messgas: 0,
             concentration_nullgas: 0,
             concentration_messgas: 0,
-            si: 0,
+            sensor_type: sensor_type,
+            si: SI::ppm,
         }
     }
 
@@ -68,9 +77,6 @@ impl Sensor {
         self.concentration_messgas
     }
 
-    pub fn get_si(&self) -> u16 {
-        self.si
-    }
 // SETTER
     pub fn set_number(&mut self, number: u16) {
         self.number = number;
@@ -104,7 +110,4 @@ impl Sensor {
         self.concentration_messgas = concentration_messgas;
     }
 
-    pub fn set_si(&mut self, si: u16) {
-        self.si = si;
-    }
 }

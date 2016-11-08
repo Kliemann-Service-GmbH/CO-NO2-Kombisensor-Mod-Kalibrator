@@ -1,4 +1,4 @@
-use co_no2_kombisensor::sensor::{Sensor, SensorType};
+use co_no2_kombisensor::sensor::{Sensor, SensorType, SI};
 
 #[derive(Debug)]
 pub struct Kombisensor {
@@ -43,12 +43,12 @@ impl Kombisensor {
     ///
     pub fn parse_modbus_registers(&mut self, modbus_registers: Vec<u16>) {
         let version = format!("{}.{}.{}", modbus_registers[0], modbus_registers[1], modbus_registers[2]);
-        let sensor1_enabled = modbus_registers[19];
-        let sensor2_enabled = modbus_registers[29];
+        let sensor1_enabled = (modbus_registers[18] >> 1) & 1;
+        let sensor2_enabled = (modbus_registers[28] >> 1) & 1;
 
         self.set_version(version);
 
-        if sensor1_enabled == 1 {
+        if sensor1_enabled == 0 {
             self.sensors[0].set_number(modbus_registers[10]);
             self.sensors[0].set_adc_value(modbus_registers[11]);
             self.sensors[0].set_min_value(modbus_registers[12]);
@@ -57,10 +57,9 @@ impl Kombisensor {
             self.sensors[0].set_adc_at_messgas(modbus_registers[15]);
             self.sensors[0].set_concentration_nullgas(modbus_registers[16]);
             self.sensors[0].set_concentration_messgas(modbus_registers[17]);
-            self.sensors[0].set_si(modbus_registers[18]);
         }
 
-        if sensor2_enabled == 1 {
+        if sensor2_enabled == 0 {
             self.sensors[1].set_number(modbus_registers[20]);
             self.sensors[1].set_adc_value(modbus_registers[21]);
             self.sensors[1].set_min_value(modbus_registers[22]);
@@ -69,7 +68,6 @@ impl Kombisensor {
             self.sensors[1].set_adc_at_messgas(modbus_registers[25]);
             self.sensors[1].set_concentration_nullgas(modbus_registers[26]);
             self.sensors[1].set_concentration_messgas(modbus_registers[27]);
-            self.sensors[1].set_si(modbus_registers[28]);
         }
     }
 }

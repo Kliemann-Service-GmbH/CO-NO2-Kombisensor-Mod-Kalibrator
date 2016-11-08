@@ -376,6 +376,31 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     <property name="position">5</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkBox" id="box_realtime_view">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkButton" id="button_live_view">
+                        <property name="label" translatable="yes">Live View (Sensordaten in Echtzeit)</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">6</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="name">page0</property>
@@ -482,7 +507,8 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                         <property name="can_focus">True</property>
                         <property name="halign">start</property>
                         <property name="adjustment">adjustment_sensor_minimal</property>
-                        <property name="round_digits">1</property>
+                        <property name="round_digits">0</property>
+                        <property name="digits">0</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -535,7 +561,8 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                         <property name="can_focus">True</property>
                         <property name="halign">start</property>
                         <property name="adjustment">adjustment_sensor_maximal</property>
-                        <property name="round_digits">1</property>
+                        <property name="round_digits">0</property>
+                        <property name="digits">0</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -602,7 +629,8 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                         <property name="can_focus">True</property>
                         <property name="halign">start</property>
                         <property name="adjustment">adjustment_sensor_concentration_at_nullgas</property>
-                        <property name="round_digits">1</property>
+                        <property name="round_digits">0</property>
+                        <property name="digits">0</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -684,7 +712,8 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                         <property name="can_focus">True</property>
                         <property name="halign">start</property>
                         <property name="adjustment">adjustment_sensor_concentration_at_messgas</property>
-                        <property name="round_digits">1</property>
+                        <property name="round_digits">0</property>
+                        <property name="digits">0</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
