@@ -1,7 +1,6 @@
 use calib_error::CalibError;
 use co_no2_kombisensor::kombisensor::Kombisensor;
 use libmodbus_rs::modbus::Modbus;
-// use std::borrow::{Borrow, BorrowMut};
 use std::sync::{Arc, Mutex};
 
 type Result<T> = ::std::result::Result<T, CalibError>;
@@ -43,8 +42,6 @@ pub fn kombisensor_discovery(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<()
 /// Kombisensor Datenstruktur.
 ///
 pub fn kombisensor_from_modbus(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<()> {
-    use std::mem;
-
     let mut kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
 

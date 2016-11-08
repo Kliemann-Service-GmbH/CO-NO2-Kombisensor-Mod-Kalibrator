@@ -18,7 +18,13 @@ use std::sync::{Arc, Mutex};
 
 mod calibrator_view;
 mod static_resource;
+mod view_messpunkt;
+mod view_liveview;
 
+
+fn callback_button_live_view(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
+    view_liveview::launch(&builder, &kombisensor);
+}
 
 // Callback Sensor Erkennen, Discovery
 fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>, configuration: &Arc<Mutex<Configuration>>) {
@@ -122,7 +128,9 @@ fn callback_button_enable_sensor(builder: &gtk::Builder, button: &gtk::ToggleBut
 }
 
 // Callback zum Speichern der Modbus Adresse
-fn callback_button_save_modbus_address(builder: &gtk::Builder) {
+fn callback_button_save_modbus_address(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
+    let mut kombisensor = kombisensor.lock().unwrap();
+    kombisensor.set_modbus_address(100);
     println!("Modbus Adresse speichern {:?}", builder);
 }
 // Callback Kalibrieren Button NO2 geklickt
@@ -155,6 +163,7 @@ fn window_setup(window: &gtk::Window) {
     }
 }
 
+
 pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     gtk::init().unwrap_or_else(|_| {
         panic!(format!("{}: GTK konnte nicht initalisiert werden.",
@@ -179,6 +188,7 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
 
     // Initialisiere alle Widgets die das Programm nutzt aus dem Glade File.
     let builder = gtk::Builder::new_from_resource("/com/gaswarnanlagen/xmz-mod-touch/GUI/main.ui");
+    let button_live_view: gtk::Button = builder.get_object("button_live_view").unwrap();
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
     let button_discover: gtk::Button = builder.get_object("button_discover").unwrap();
@@ -212,14 +222,18 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
         info_bar.hide();
     }));
 
+    button_live_view.connect_clicked(clone!(builder, kombisensor => move |_| {
+        callback_button_live_view(&builder, &kombisensor);
+    }));
+
     // Callback Senor erkennen, Discovery
     button_discover.connect_clicked(clone!(builder, kombisensor, configuration => move |_| {
         callback_button_discover(&builder, &kombisensor, &configuration);
     }));
 
     // Callback 'button_save_modbus_address' geklickt
-    button_save_modbus_address.connect_clicked(clone!(builder => move |_| {
-        callback_button_save_modbus_address(&builder);
+    button_save_modbus_address.connect_clicked(clone!(builder, kombisensor => move |_| {
+        callback_button_save_modbus_address(&builder, &kombisensor);
     }));
 
     button_enable_no2.connect_clicked(clone!(builder, button_enable_no2, kombisensor, configuration => move |_| {

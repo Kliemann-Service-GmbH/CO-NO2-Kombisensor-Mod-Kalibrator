@@ -11,7 +11,7 @@ impl Kombisensor {
     pub fn new() -> Self {
         Kombisensor {
             version: "0.0.0".to_string(),
-            modbus_address: 0,
+            modbus_address: 247,
             sensors: vec![Sensor::new(SensorType::RaGasNO2), Sensor::new(SensorType::RaGasCO)],
         }
     }
