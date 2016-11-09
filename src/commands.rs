@@ -6,6 +6,24 @@ use std::sync::{Arc, Mutex};
 type Result<T> = ::std::result::Result<T, CalibError>;
 
 
+/// Speichert eine neue Modbus Adresse im Kombisensor
+///
+pub fn kombisensor_new_modbus_address(kombisensor: &Arc<Mutex<Kombisensor>>, new_modbus_address: i32) -> Result<()> {
+    let mut kombisensor = kombisensor.lock().unwrap();
+    let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
+    let slave_id: u8 = kombisensor.get_modbus_address();
+    let register_address: i32 = 3; // Im Modbus Register[3] ist die Modbus Adresse gespeichert.
+
+    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
+    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
+    try!(modbus.set_debug(true));
+    try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
+    try!(modbus.connect());
+    try!(modbus.write_register(register_address, new_modbus_address));
+
+    Ok(())
+}
+
 /// Modbus Neustart Befehl
 ///
 /// Diese Funktion sendet ein raw request zu dem Server, der Modbus Funktion Code 0x08,
@@ -86,7 +104,6 @@ pub fn kombisensor_to_modbus(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<()
     // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
     let slave_id: u8 = kombisensor.get_modbus_address();
-    let raw_request = vec![slave_id, 0x08, 0x0, 0x01];
 
     try!(modbus.connect());
 

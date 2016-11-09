@@ -189,11 +189,16 @@ fn callback_button_enable_sensor(builder: &gtk::Builder, button: &gtk::ToggleBut
 
 // Callback zum Speichern der Modbus Adresse
 fn callback_button_save_modbus_address(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
-    // let mut kombisensor = kombisensor.lock().unwrap();
-    // kombisensor.set_modbus_address(100);
-    // println!("Modbus Adresse speichern {:?}", builder);
-    commands::kombisensor_restart_via_modbus(kombisensor);
+    let adjustment_modbus_address: gtk::Adjustment = builder.get_object("adjustment_modbus_address").unwrap();
+    // Die Adjustment Werte sind leider f64 Datentypen. Die nachsten Schritte sind nötig um
+    // daraus ein u8 Datentyp zu machen.
+    let modbus_address = adjustment_modbus_address.get_value().round() as u64;
+    let modbus_address: [u32; 2] = unsafe { ::std::mem::transmute(modbus_address)};
+    let new_modbus_address: i32 = modbus_address[0] as i32;
+
+    commands::kombisensor_new_modbus_address(kombisensor, new_modbus_address);
 }
+
 // Callback Kalibrieren Button NO2 geklickt
 fn callback_button_calib_no2(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
     calibrator_view::launch("NO2", &builder, &kombisensor);
@@ -336,7 +341,9 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     });
 
     // Worker Threads
-    //
+
+    // Update der sensor Daten via Modbus. Nur wenn das `live_view` flag gesetzt ist. Das geschieht
+    // z.B. im callback_button_live_view
     use std::thread;
     use std::time::Duration;
 
