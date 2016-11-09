@@ -22,6 +22,64 @@ mod view_messpunkt;
 mod view_liveview;
 
 
+fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
+    use std::mem::transmute;
+
+    let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
+    let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
+    let button_discover: gtk::Button = builder.get_object("button_discover").unwrap();
+    let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
+    let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
+    let button_live_view: gtk::Button = builder.get_object("button_live_view").unwrap();
+    let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
+    let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
+    let label_co: gtk::Label = builder.get_object("label_co").unwrap();
+    let label_info_bar_message: gtk::Label = builder.get_object("label_info_bar_message").unwrap();
+    let label_kombisensor_version: gtk::Label = builder.get_object("label_kombisensor_version").unwrap();
+    let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
+    let spin_button_modbus_address: gtk::SpinButton = builder.get_object("spin_button_modbus_address").unwrap();
+    let adjustment_modbus_address: gtk::Adjustment = builder.get_object("adjustment_modbus_address").unwrap();
+
+    // Get modbus Adresse von dem Adjustment
+    {
+        let mut kombisensor = kombisensor.lock().unwrap();
+        // Die Adjustment Werte sind leider f64 Datentypen. Die nachsten Schritte sind nötig um
+        // daraus ein u8 Datentyp zu machen.
+        let modbus_address = adjustment_modbus_address.get_value().round() as u64;
+        let modbus_address: [u8; 8] = unsafe { ::std::mem::transmute(modbus_address)};
+        kombisensor.set_modbus_address(modbus_address[0] as u8);
+    }
+
+    // Wird ein Sensor erkannt dann wird als nächstes die Kombisensor Datenstruktur
+    // mit den Daten der echten Hardware gefüllt.
+    match commands::kombisensor_from_modbus(&kombisensor) {
+        Err(err) => {
+            label_info_bar_message.set_text(err.description());
+            info_bar.show();
+        }
+        Ok(_) => {
+            // Label "Firmware Version" füllen
+            label_kombisensor_version.set_text(&kombisensor.lock().unwrap().get_version());
+
+            // Widget aktivieren
+            // TODO: Funktion Widget Status -> Kombisensor Struct
+            button_calib_co.set_sensitive(true);
+            button_calib_no2.set_sensitive(true);
+            button_enable_co.set_sensitive(true);
+            button_enable_no2.set_sensitive(true);
+            button_save_modbus_address.set_sensitive(false);
+            button_save_modbus_address.set_sensitive(true);
+            label_co.set_sensitive(true);
+            label_no2.set_sensitive(true);
+
+
+            spin_button_modbus_address.set_value(kombisensor.lock().unwrap().get_modbus_address() as f64);
+        }
+    }
+
+    button_live_view.set_sensitive(true);
+}
+
 fn callback_button_live_view(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
     view_liveview::launch(&builder, &kombisensor);
 }
@@ -33,13 +91,14 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
     let button_discover: gtk::Button = builder.get_object("button_discover").unwrap();
     let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
     let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
+    let button_live_view: gtk::Button = builder.get_object("button_live_view").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
     let label_co: gtk::Label = builder.get_object("label_co").unwrap();
-    let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
     let label_info_bar_message: gtk::Label = builder.get_object("label_info_bar_message").unwrap();
-    let spin_button_modbus_address: gtk::SpinButton = builder.get_object("spin_button_modbus_address").unwrap();
     let label_kombisensor_version: gtk::Label = builder.get_object("label_kombisensor_version").unwrap();
+    let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
+    let spin_button_modbus_address: gtk::SpinButton = builder.get_object("spin_button_modbus_address").unwrap();
     let window: gtk::Window = builder.get_object("main_window").unwrap();
 
     // Get config from Arc<Mutex<>>
@@ -62,6 +121,7 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
                     button_calib_no2.set_sensitive(true);
                     button_enable_co.set_sensitive(true);
                     button_enable_no2.set_sensitive(true);
+                    button_save_modbus_address.set_sensitive(false);
                     button_save_modbus_address.set_sensitive(true);
                     label_co.set_sensitive(true);
                     label_no2.set_sensitive(true);
@@ -129,9 +189,10 @@ fn callback_button_enable_sensor(builder: &gtk::Builder, button: &gtk::ToggleBut
 
 // Callback zum Speichern der Modbus Adresse
 fn callback_button_save_modbus_address(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
-    let mut kombisensor = kombisensor.lock().unwrap();
-    kombisensor.set_modbus_address(100);
-    println!("Modbus Adresse speichern {:?}", builder);
+    // let mut kombisensor = kombisensor.lock().unwrap();
+    // kombisensor.set_modbus_address(100);
+    // println!("Modbus Adresse speichern {:?}", builder);
+    commands::kombisensor_restart_via_modbus(kombisensor);
 }
 // Callback Kalibrieren Button NO2 geklickt
 fn callback_button_calib_no2(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
@@ -192,6 +253,7 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
     let button_discover: gtk::Button = builder.get_object("button_discover").unwrap();
+    let button_sensor_connect: gtk::Button = builder.get_object("button_sensor_connect").unwrap();
     let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
     let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
@@ -206,9 +268,10 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     button_calib_no2.set_sensitive(false);
     button_enable_co.set_sensitive(false);
     button_enable_no2.set_sensitive(false);
+    button_live_view.set_sensitive(false);
+    button_save_modbus_address.set_sensitive(false);
     label_co.set_sensitive(false);
     label_no2.set_sensitive(false);
-    button_save_modbus_address.set_sensitive(false);
 
 
     // Rufe Funktion für die Basis Fenster Konfiguration auf
@@ -220,6 +283,10 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     // Close callback
     info_bar.connect_response(clone!(info_bar => move |info_bar, _| {
         info_bar.hide();
+    }));
+
+    button_sensor_connect.connect_clicked(clone!(builder, kombisensor => move |_| {
+        callback_button_sensor_connect(&builder, &kombisensor);
     }));
 
     button_live_view.connect_clicked(clone!(builder, kombisensor => move |_| {
@@ -267,6 +334,24 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
         }
         Inhibit(false)
     });
+
+    // Worker Threads
+    //
+    use std::thread;
+    use std::time::Duration;
+
+    thread::spawn(clone!(kombisensor => move || {
+        loop {
+            {
+                let mut kombisensor = kombisensor.lock().unwrap();
+                if kombisensor.get_live_update() {
+                    println!("{:?}", &kombisensor.get_modbus_address());
+                }
+            }
+            thread::sleep(Duration::from_millis(500));
+        } // End loop
+    }));
+
 
     gtk::main();
 }

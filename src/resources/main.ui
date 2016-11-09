@@ -197,11 +197,37 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="button_discover">
-                    <property name="label" translatable="yes">Sensor erkennen</property>
+                  <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkButton" id="button_sensor_connect">
+                        <property name="label" translatable="yes">Sensor auslesen</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="button_discover">
+                        <property name="label" translatable="yes">Sensor erkennen</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="halign">end</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -233,7 +259,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                         <property name="margin_right">30</property>
                         <property name="text" translatable="yes">1</property>
                         <property name="adjustment">adjustment_modbus_address</property>
-                        <property name="value">1</property>
+                        <property name="value">247</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -242,7 +268,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkScale">
+                      <object class="GtkScale" id="scale_modbus_address">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="adjustment">adjustment_modbus_address</property>
@@ -456,6 +482,20 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="margin_top">10</property>
+                    <property name="label" translatable="yes">1. Sensor Bereich</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -502,20 +542,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                         <property name="position">2</property>
                       </packing>
                     </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="margin_top">10</property>
-                    <property name="label" translatable="yes">1. Sensor Bereich</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

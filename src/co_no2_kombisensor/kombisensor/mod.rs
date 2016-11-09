@@ -5,6 +5,7 @@ pub struct Kombisensor {
     version: String,
     modbus_address: u8,
     pub sensors: Vec<Sensor>,
+    live_update: bool,
 }
 
 impl Kombisensor {
@@ -13,6 +14,7 @@ impl Kombisensor {
             version: "0.0.0".to_string(),
             modbus_address: 247,
             sensors: vec![Sensor::new(SensorType::RaGasNO2), Sensor::new(SensorType::RaGasCO)],
+            live_update: false,
         }
     }
 
@@ -27,6 +29,11 @@ impl Kombisensor {
         self.modbus_address
     }
 
+    /// Status des live_update Flags
+    pub fn get_live_update(&self) -> bool {
+        self.live_update
+    }
+
 // SETTER
     /// Setzt die Versionsnummer
     pub fn set_version(&mut self, version: String) {
@@ -36,6 +43,11 @@ impl Kombisensor {
     /// Setzt die Modbus Adresse
     pub fn set_modbus_address(&mut self, modbus_address: u8) {
         self.modbus_address = modbus_address
+    }
+
+    /// Status des live_update Flags
+    pub fn set_live_update(&mut self, live_update: bool) {
+        self.live_update = live_update
     }
 
 //MISC
