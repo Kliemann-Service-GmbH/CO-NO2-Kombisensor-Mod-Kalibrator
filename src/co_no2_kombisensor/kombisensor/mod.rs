@@ -67,8 +67,8 @@ impl Kombisensor {
             self.sensors[0].set_max_value(modbus_registers[13]);
             self.sensors[0].set_adc_at_nullgas(modbus_registers[14]);
             self.sensors[0].set_adc_at_messgas(modbus_registers[15]);
-            self.sensors[0].set_concentration_nullgas(modbus_registers[16]);
-            self.sensors[0].set_concentration_messgas(modbus_registers[17]);
+            self.sensors[0].set_concentration_at_nullgas(modbus_registers[16]);
+            self.sensors[0].set_concentration_at_messgas(modbus_registers[17]);
         }
 
         if sensor2_enabled == 0 {
@@ -78,8 +78,8 @@ impl Kombisensor {
             self.sensors[1].set_max_value(modbus_registers[23]);
             self.sensors[1].set_adc_at_nullgas(modbus_registers[24]);
             self.sensors[1].set_adc_at_messgas(modbus_registers[25]);
-            self.sensors[1].set_concentration_nullgas(modbus_registers[26]);
-            self.sensors[1].set_concentration_messgas(modbus_registers[27]);
+            self.sensors[1].set_concentration_at_nullgas(modbus_registers[26]);
+            self.sensors[1].set_concentration_at_messgas(modbus_registers[27]);
         }
     }
 }

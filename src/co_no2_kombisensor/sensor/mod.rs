@@ -22,8 +22,8 @@ pub struct Sensor {
     max_value: u16,
     adc_at_nullgas: u16,
     adc_at_messgas: u16,
-    concentration_nullgas: u16,
-    concentration_messgas: u16,
+    concentration_at_nullgas: u16,
+    concentration_at_messgas: u16,
     sensor_type: SensorType, // Nicht direkt in der Kombisensor Firmware (coil 0 für Sensor1 und 16 für Sensor2)
     si: SI, // Nicht direkt in der Kombisensor Firmware/ Modbus Datenstruktur (coils 1..3 für Sensor1 usw.)
 }
@@ -37,8 +37,8 @@ impl Sensor {
             max_value: 0,
             adc_at_nullgas: 0,
             adc_at_messgas: 0,
-            concentration_nullgas: 0,
-            concentration_messgas: 0,
+            concentration_at_nullgas: 0,
+            concentration_at_messgas: 0,
             sensor_type: sensor_type,
             si: SI::ppm,
         }
@@ -69,12 +69,12 @@ impl Sensor {
         self.adc_at_messgas = adc_at_messgas;
     }
 
-    pub fn set_concentration_nullgas(&mut self, concentration_nullgas: u16) {
-        self.concentration_nullgas = concentration_nullgas;
+    pub fn set_concentration_at_nullgas(&mut self, concentration_at_nullgas: u16) {
+        self.concentration_at_nullgas = concentration_at_nullgas;
     }
 
-    pub fn set_concentration_messgas(&mut self, concentration_messgas: u16) {
-        self.concentration_messgas = concentration_messgas;
+    pub fn set_concentration_at_messgas(&mut self, concentration_at_messgas: u16) {
+        self.concentration_at_messgas = concentration_at_messgas;
     }
 // GETTER
     pub fn get_number(&self) -> u16 {
@@ -101,36 +101,32 @@ impl Sensor {
         self.adc_at_messgas
     }
 
-    pub fn get_concentration_nullgas(&self) -> u16 {
-        self.concentration_nullgas
+    pub fn get_concentration_at_nullgas(&self) -> u16 {
+        self.concentration_at_nullgas
     }
 
-    pub fn get_concentration_messgas(&self) -> u16 {
-        self.concentration_messgas
+    pub fn get_concentration_at_messgas(&self) -> u16 {
+        self.concentration_at_messgas
     }
 /// MISC
     pub fn get_mv(&self) -> u16 {
         (5000 / 1024) * self.adc_value as u16
     }
 
-    pub fn get_value(&self) -> u16 {
-        let adc_value: i16 = self.adc_value as i16;
-        let concentration_nullgas: i16 = self.concentration_nullgas as i16;
-        let concentration_messgas: i16 = self.concentration_messgas as i16;
-        let adc_at_nullgas: i16 = self.adc_at_nullgas as i16;
+    pub fn get_concentration(&self) -> f64 {
+        let adc_value = self.adc_value;
+        let adc_at_nullgas = self.adc_at_nullgas;
         // Damit wir in der Formel nicht durch Null teilen, wird der Wert adc_at_messgas auf 1 gesetzt, sollte er Null sein
-        let adc_at_messgas: i16 = if self.adc_at_messgas as i16 == 0 {1} else {self.adc_at_messgas as i16};
+        let adc_at_messgas = if self.adc_at_messgas == 0 { 1 } else { self.adc_at_messgas };
+        let concentration_at_nullgas = self.concentration_at_nullgas;
+        let concentration_at_messgas = self.concentration_at_messgas;
 
-        let retvalue = ((concentration_messgas - concentration_nullgas) /
-        (adc_at_messgas - adc_at_nullgas)) *
-        (adc_value - adc_at_nullgas) + concentration_nullgas;
+        let concentration = (concentration_at_messgas as f64 - concentration_at_nullgas as f64) /
+        (adc_at_messgas as f64 - adc_at_nullgas as f64) *
+        (adc_value as f64 - adc_at_nullgas as f64) + concentration_at_nullgas as f64;
 
-        println!("({} - {}) / ({} - {}) * ({} - {}) + {} = {}", concentration_messgas, concentration_nullgas,
-        adc_at_messgas, adc_at_nullgas,
-        adc_value, adc_at_nullgas, concentration_nullgas, retvalue);
-
-        retvalue as u16
-        // 0
+        // Ist die Konzentration kleiner Null, wird Null ausgegeben, ansonnsten die berechnete Konzentration
+        if concentration < 0.0 { 0.0 } else { concentration }
     }
 
 }

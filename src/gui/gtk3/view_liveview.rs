@@ -43,8 +43,8 @@ pub fn launch(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
             co_adc_value = kombisensor.sensors[1].get_adc_value().to_string();
             no2_mv_value = kombisensor.sensors[0].get_mv().to_string();
             co_mv_value = kombisensor.sensors[1].get_mv().to_string();
-            no2_value = kombisensor.sensors[1].get_value().to_string();
-            co_value = kombisensor.sensors[0].get_value().to_string();
+            no2_value = (kombisensor.sensors[1].get_concentration() as u64).to_string();
+            co_value = (kombisensor.sensors[0].get_concentration() as u64).to_string();
         }
 
         label_liveview_no2_adc_value.set_text(&no2_adc_value);
