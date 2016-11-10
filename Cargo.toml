@@ -20,4 +20,4 @@ gtk = { version = "0.1.0", features = ["v3_16"] }
 gtk-sys = "*"
 libc = "*"
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
-xmz_server = { git = "https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git" }
+# xmz_server = { git = "https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git" }

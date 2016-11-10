@@ -2,8 +2,6 @@
 extern crate gdk;
 extern crate gtk;
 extern crate libmodbus_rs;
-extern crate xmz_server;
-extern crate byteorder;
 
 #[macro_use] mod macros;
 mod gui {
