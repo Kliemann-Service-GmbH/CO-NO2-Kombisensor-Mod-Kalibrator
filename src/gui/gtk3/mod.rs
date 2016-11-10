@@ -22,6 +22,7 @@ mod view_messpunkt;
 mod view_liveview;
 
 
+// Callback "Sensor auslesen"
 fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
     use std::mem::transmute;
 
@@ -71,7 +72,7 @@ fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mute
             button_save_modbus_address.set_sensitive(true);
             label_co.set_sensitive(true);
             label_no2.set_sensitive(true);
-
+            info_bar.hide();
 
             spin_button_modbus_address.set_value(kombisensor.lock().unwrap().get_modbus_address() as f64);
         }
@@ -80,6 +81,7 @@ fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mute
     button_live_view.set_sensitive(true);
 }
 
+// Callback Live Ansicht der Sensor Messzellen
 fn callback_button_live_view(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
     view_liveview::launch(&builder, &kombisensor);
 }
@@ -229,7 +231,6 @@ fn window_setup(window: &gtk::Window) {
     }
 }
 
-
 pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     gtk::init().unwrap_or_else(|_| {
         panic!(format!("{}: GTK konnte nicht initalisiert werden.",
@@ -277,7 +278,6 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     button_save_modbus_address.set_sensitive(false);
     label_co.set_sensitive(false);
     label_no2.set_sensitive(false);
-
 
     // Rufe Funktion für die Basis Fenster Konfiguration auf
     window_setup(&window);
@@ -347,14 +347,14 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     use std::thread;
     use std::time::Duration;
 
-    thread::spawn(clone!(kombisensor => move || {
+    thread::spawn(clone!(kombisensor, builder => move || {
         loop {
-            {
-                let mut kombisensor = kombisensor.lock().unwrap();
-                if kombisensor.get_live_update() {
-                    println!("{:?}", &kombisensor.get_modbus_address());
-                }
+            // Ein weiterer Klone des Kombisensors ist nötig, zur Abfrage des Live Update Flags
+            let kombisensor1 = kombisensor.clone();
+            if kombisensor1.lock().unwrap().get_live_update() {
+                commands::kombisensor_from_modbus(&kombisensor);
             }
+
             thread::sleep(Duration::from_millis(500));
         } // End loop
     }));
