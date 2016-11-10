@@ -38,6 +38,7 @@ pub fn launch<T: AsRef<str>>(sensor_type: T, builder: &gtk::Builder, kombisensor
                 adjustment_sensor_concentration_at_messgas.configure(sensor.get_concentration_at_messgas() as f64,
                     sensor.get_min_value() as f64, sensor.get_max_value() as f64 + 1.0, 1.0, 1.0, 1.0);
             }
+
             button_messpunkt_nullgas.connect_clicked(clone!(builder, kombisensor_no2 => move |_| {
                 callback_button_messpunkt_nullgas("NO2", &builder, &kombisensor_no2);
             }));
