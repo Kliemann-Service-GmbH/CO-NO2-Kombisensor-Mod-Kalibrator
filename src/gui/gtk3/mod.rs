@@ -168,21 +168,21 @@ fn callback_button_enable_sensor(builder: &gtk::Builder, button: &gtk::ToggleBut
         }
     }
 
-    if button == &button_enable_co {
-        sensor_type = "CO".to_string();
-        match commands::enable_sensor(&kombisensor, &sensor_type, sensor_status) {
-            Ok(_) => {
-                button_calib_co.set_sensitive(sensor_status);
-                label_co.set_sensitive(sensor_status);
-            }
-            Err(_) => {}
-        }
-    } else if button == &button_enable_no2 {
+    if button == &button_enable_no2 {
         sensor_type = "NO2".to_string();
         match commands::enable_sensor(&kombisensor, &sensor_type, sensor_status) {
             Ok(_) => {
                 button_calib_no2.set_sensitive(sensor_status);
                 label_no2.set_sensitive(sensor_status);
+            }
+            Err(_) => {}
+        }
+    } else if button == &button_enable_co {
+        sensor_type = "CO".to_string();
+        match commands::enable_sensor(&kombisensor, &sensor_type, sensor_status) {
+            Ok(_) => {
+                button_calib_co.set_sensitive(sensor_status);
+                label_co.set_sensitive(sensor_status);
             }
             Err(_) => {}
         }
