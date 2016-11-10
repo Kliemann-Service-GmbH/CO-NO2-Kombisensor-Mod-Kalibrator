@@ -748,7 +748,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="button_messpunkt_messgas">
                         <property name="label" translatable="yes">Messgas Probe</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -802,7 +802,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
               </packing>
             </child>
             <child>
-              <object class="GtkBox" id="box_messpunkt_abgleich">
+              <object class="GtkBox" id="box_messpunkt_view">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
@@ -855,9 +855,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     <property name="can_focus">False</property>
                     <property name="homogeneous">True</property>
                     <child>
-                      <placeholder/>
-                    </child>
-                    <child>
                       <object class="GtkLabel" id="label_messpunkt_adc">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -889,13 +886,10 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="box_messpunkt_V">
+                  <object class="GtkBox" id="box_messpunkt_mV">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="homogeneous">True</property>
-                    <child>
-                      <placeholder/>
-                    </child>
                     <child>
                       <object class="GtkLabel" id="label_messpunkt_mV">
                         <property name="visible">True</property>

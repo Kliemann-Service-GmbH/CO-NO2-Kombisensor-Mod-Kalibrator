@@ -114,20 +114,22 @@ impl Sensor {
     }
 
     pub fn get_value(&self) -> u16 {
-        let adc_value = self.adc_value;
-        let concentration_nullgas = self.concentration_nullgas;
-        let concentration_messgas = self.concentration_messgas;
-        let adc_at_nullgas = self.adc_at_nullgas;
+        let adc_value: i16 = self.adc_value as i16;
+        let concentration_nullgas: i16 = self.concentration_nullgas as i16;
+        let concentration_messgas: i16 = self.concentration_messgas as i16;
+        let adc_at_nullgas: i16 = self.adc_at_nullgas as i16;
         // Damit wir in der Formel nicht durch Null teilen, wird der Wert adc_at_messgas auf 1 gesetzt, sollte er Null sein
-        let adc_at_messgas = if self.adc_at_messgas == 0 {1} else {self.adc_at_messgas};
+        let adc_at_messgas: i16 = if self.adc_at_messgas as i16 == 0 {1} else {self.adc_at_messgas as i16};
 
-        println!("({} - {}) / ({} - {}) * ({} - {}) + {}", concentration_messgas, concentration_nullgas,
-        adc_at_messgas, adc_at_nullgas,
-        adc_value, adc_at_nullgas, concentration_nullgas);
-        
-        ((concentration_messgas - concentration_nullgas) /
+        let retvalue = ((concentration_messgas - concentration_nullgas) /
         (adc_at_messgas - adc_at_nullgas)) *
-        (adc_value - adc_at_nullgas) + concentration_nullgas
+        (adc_value - adc_at_nullgas) + concentration_nullgas;
+
+        println!("({} - {}) / ({} - {}) * ({} - {}) + {} = {}", concentration_messgas, concentration_nullgas,
+        adc_at_messgas, adc_at_nullgas,
+        adc_value, adc_at_nullgas, concentration_nullgas, retvalue);
+
+        retvalue as u16
         // 0
     }
 

@@ -16,7 +16,7 @@ use std::path::Path;
 use co_no2_kombisensor::*;
 use std::sync::{Arc, Mutex};
 
-mod calibrator_view;
+mod view_calibrator;
 mod static_resource;
 mod view_messpunkt;
 mod view_liveview;
@@ -203,11 +203,11 @@ fn callback_button_save_modbus_address(builder: &gtk::Builder, kombisensor: &Arc
 
 // Callback Kalibrieren Button NO2 geklickt
 fn callback_button_calib_no2(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
-    calibrator_view::launch("NO2", &builder, &kombisensor);
+    view_calibrator::launch("NO2", &builder, &kombisensor);
 }
 // Callback Kalibrieren Button CO geklickt
 fn callback_button_calib_co(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
-    calibrator_view::launch("CO", &builder, &kombisensor);
+    view_calibrator::launch("CO", &builder, &kombisensor);
 }
 
 // Basic Setup des Fensters

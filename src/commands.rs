@@ -6,6 +6,25 @@ use std::sync::{Arc, Mutex};
 type Result<T> = ::std::result::Result<T, CalibError>;
 
 
+/// Speichert ein Wert in einem Register
+///
+pub fn sensor_new_adc_at_nullgas(kombisensor: &Arc<Mutex<Kombisensor>>, adc_value: i32) -> Result<()> {
+    let mut kombisensor = kombisensor.lock().unwrap();
+    let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
+    let slave_id: u8 = kombisensor.get_modbus_address();
+    let register_address: i32 = 14; // Im Modbus Register[3] ist die Modbus Adresse gespeichert.
+
+    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
+    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
+    try!(modbus.set_debug(true));
+    try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
+    try!(modbus.connect());
+    try!(modbus.write_register(register_address, adc_value));
+
+    Ok(())
+}
+
+
 /// Speichert eine neue Modbus Adresse im Kombisensor
 ///
 pub fn kombisensor_new_modbus_address(kombisensor: &Arc<Mutex<Kombisensor>>, new_modbus_address: i32) -> Result<()> {
