@@ -54,7 +54,12 @@ pub fn launch(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
         label_liveview_no2_value.set_text(&no2_value);
         label_liveview_co_value.set_text(&co_value);
 
-        Continue(true)
+        let kombisensor = kombisensor.lock().unwrap();
+        if kombisensor.get_live_update() {
+            Continue(true)
+        } else {
+            Continue(false)
+        }
     }));
 
     // Weg zurück
