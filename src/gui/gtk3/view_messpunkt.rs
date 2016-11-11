@@ -4,9 +4,10 @@ use std::sync::{Arc, Mutex};
 use std::borrow::Borrow;
 use co_no2_kombisensor::sensor::{SensorType};
 use co_no2_kombisensor::kombisensor::{Kombisensor};
+use gas::GasType;
 
 
-fn save_adc_value<T: AsRef<str>>(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>, sensor_num: usize, messpunkt_type: T) {
+fn save_adc_value(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>, sensor_num: usize, gas_type: GasType) {
     let button_messpunkt_save: gtk::Button = builder.get_object("button_messpunkt_save").unwrap();
     button_messpunkt_save.connect_clicked(clone!(builder, kombisensor => move |_| {
         let check_button_adc_manuell: gtk::CheckButton = builder.get_object("check_button_adc_manuell").unwrap();
@@ -26,7 +27,10 @@ fn save_adc_value<T: AsRef<str>>(builder: &gtk::Builder, kombisensor: &Arc<Mutex
             adc_value = kombisensor.sensors[sensor_num].get_adc_value() as i32;
         }
 
-        ::commands::sensor_new_adc_at_nullgas(&kombisensor, adc_value);
+        match gas_type {
+            GasType::Nullgas => { ::commands::sensor_new_adc_at(GasType::Nullgas, sensor_num, &kombisensor, adc_value); }
+            GasType::Messgas => { ::commands::sensor_new_adc_at(GasType::Messgas, sensor_num, &kombisensor, adc_value); }
+        }
     }));
 }
 
@@ -72,7 +76,7 @@ fn update_widgets(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>,
     }));
 }
 
-pub fn launch(sensor_type: SensorType, messpunkt_type: &'static str, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
+pub fn launch(gas_type: GasType, sensor_type: SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
     let stack_main: gtk::Stack = builder.get_object("stack_main").unwrap();
     let button_messpunkt_cancel: gtk::Button = builder.get_object("button_messpunkt_cancel").unwrap();
     let box_calibrator_view: gtk::Box = builder.get_object("box_calibrator_view").unwrap();
@@ -87,12 +91,12 @@ pub fn launch(sensor_type: SensorType, messpunkt_type: &'static str, builder: &g
         SensorType::RaGasNO2 => {
             update_widgets(&builder, &kombisensor, 0);
 
-            save_adc_value(&builder, &kombisensor, 0, &messpunkt_type);
+            save_adc_value(&builder, &kombisensor, 0, gas_type);
         }
         SensorType::RaGasCO => {
             update_widgets(&builder, &kombisensor, 1);
 
-            save_adc_value(&builder, &kombisensor, 1, &messpunkt_type);
+            save_adc_value(&builder, &kombisensor, 1, gas_type);
         }
     }
 

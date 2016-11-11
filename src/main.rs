@@ -16,6 +16,7 @@ mod co_no2_kombisensor {
     pub mod kombisensor;
     pub mod sensor;
 }
+mod gas;
 
 use std::sync::{Arc, Mutex};
 

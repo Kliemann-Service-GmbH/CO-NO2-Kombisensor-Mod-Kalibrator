@@ -14,6 +14,7 @@ use gtk;
 use gtk::prelude::*;
 use std::path::Path;
 use co_no2_kombisensor::*;
+use co_no2_kombisensor::sensor::SensorType;
 use std::sync::{Arc, Mutex};
 
 mod view_calibrator;
@@ -169,8 +170,7 @@ fn callback_button_enable_sensor(builder: &gtk::Builder, button: &gtk::ToggleBut
     }
 
     if button == &button_enable_no2 {
-        sensor_type = "NO2".to_string();
-        match commands::enable_sensor(&kombisensor, &sensor_type, sensor_status) {
+        match commands::enable_sensor(&kombisensor, SensorType::RaGasNO2, sensor_status) {
             Ok(_) => {
                 button_calib_no2.set_sensitive(sensor_status);
                 label_no2.set_sensitive(sensor_status);
@@ -178,8 +178,7 @@ fn callback_button_enable_sensor(builder: &gtk::Builder, button: &gtk::ToggleBut
             Err(_) => {}
         }
     } else if button == &button_enable_co {
-        sensor_type = "CO".to_string();
-        match commands::enable_sensor(&kombisensor, &sensor_type, sensor_status) {
+        match commands::enable_sensor(&kombisensor, SensorType::RaGasCO, sensor_status) {
             Ok(_) => {
                 button_calib_co.set_sensitive(sensor_status);
                 label_co.set_sensitive(sensor_status);
@@ -203,11 +202,11 @@ fn callback_button_save_modbus_address(builder: &gtk::Builder, kombisensor: &Arc
 
 // Callback Kalibrieren Button NO2 geklickt
 fn callback_button_calib_no2(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
-    view_calibrator::launch("NO2", &builder, &kombisensor);
+    view_calibrator::launch(SensorType::RaGasNO2, &builder, &kombisensor);
 }
 // Callback Kalibrieren Button CO geklickt
 fn callback_button_calib_co(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
-    view_calibrator::launch("CO", &builder, &kombisensor);
+    view_calibrator::launch(SensorType::RaGasCO, &builder, &kombisensor);
 }
 
 // Basic Setup des Fensters

@@ -1,5 +1,7 @@
 use calib_error::CalibError;
 use co_no2_kombisensor::kombisensor::Kombisensor;
+use co_no2_kombisensor::sensor::SensorType;
+use gas::GasType;
 use libmodbus_rs::modbus::Modbus;
 use std::sync::{Arc, Mutex};
 
@@ -12,7 +14,31 @@ pub fn sensor_new_adc_at_nullgas(kombisensor: &Arc<Mutex<Kombisensor>>, adc_valu
     let mut kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
     let slave_id: u8 = kombisensor.get_modbus_address();
-    let register_address: i32 = 14; // Im Modbus Register[3] ist die Modbus Adresse gespeichert.
+    let register_address: i32 = 14;
+
+    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
+    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
+    try!(modbus.set_debug(true));
+    try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
+    try!(modbus.connect());
+    try!(modbus.write_register(register_address, adc_value));
+
+    Ok(())
+}
+
+/// Speichert ein Wert in einem Register
+///
+pub fn sensor_new_adc_at(gas_type: GasType, sensor_num: usize, kombisensor: &Arc<Mutex<Kombisensor>>, adc_value: i32) -> Result<()> {
+    let mut kombisensor = kombisensor.lock().unwrap();
+    let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
+    let slave_id: u8 = kombisensor.get_modbus_address();
+
+    let mut register_address_offset = 0;
+    match gas_type {
+        GasType::Nullgas => { register_address_offset = 14; }  // Register 14 oder 24 ADC Nullgas
+        GasType::Messgas => { register_address_offset = 15; }  // Register 15 oder 25 ADC Nullgas
+    }
+    let register_address: i32 = (sensor_num as i32 * 10) + register_address_offset;
 
     #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
     // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
@@ -133,7 +159,7 @@ pub fn kombisensor_to_modbus(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<()
 ///
 /// Diese Funktion sendet entweder das Modbus Coil 0 (NO2 Sensor) oder das Coil 16 (CO Sensor).
 /// Der Coil status (an/ aus) wird mit dem Parameter sensor_state übergeben.
-pub fn enable_sensor(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_type: &str, sensor_state: bool) -> Result<()> {
+pub fn enable_sensor(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_type: SensorType, sensor_state: bool) -> Result<()> {
     let mut kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
     try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
@@ -143,9 +169,8 @@ pub fn enable_sensor(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_type: &str, s
     try!(modbus.connect());
 
     match sensor_type {
-        "NO2" => try!(modbus.write_bit(0x00, sensor_state)),
-        "CO" =>  try!(modbus.write_bit(0x16, sensor_state)),
-        _ => {}
+        SensorType::RaGasNO2 => try!(modbus.write_bit(0x00, sensor_state)),
+        SensorType::RaGasCO =>  try!(modbus.write_bit(0x16, sensor_state)),
     }
 
     Ok(())
