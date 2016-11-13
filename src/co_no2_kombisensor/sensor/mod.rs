@@ -1,6 +1,6 @@
 /// Aktuelle Rust Representation des CO-NO2 Kombisensors (Firmware Version: 0.11.1)
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum SensorType {
     RaGasNO2,
     RaGasCO,

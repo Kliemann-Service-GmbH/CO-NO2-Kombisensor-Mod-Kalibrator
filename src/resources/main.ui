@@ -778,7 +778,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkButton" id="button_calibrator_save_min_max">
+                      <object class="GtkButton" id="button_calibrator_save">
                         <property name="label" translatable="yes">speichern</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>

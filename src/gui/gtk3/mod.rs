@@ -1,3 +1,7 @@
+/// Das ist der Controller zum Index View des Kalibrators.
+///
+/// Von hier aus wird durch die Anwendung navigiert. Die Views auf den anderen Stacks werden bei bedarf gefüllt.
+///
 extern crate libc;
 extern crate glib_sys as glib_ffi;
 extern crate gtk_sys as gtk_ffi;
@@ -130,7 +134,7 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
                     label_no2.set_sensitive(true);
 
                     spin_button_modbus_address.set_value(kombisensor.lock().unwrap().get_modbus_address() as f64);
-                    println!("{:#?}", kombisensor);
+                    println!("Erkannter Sensor:\n{:#?}\n", kombisensor);
                 }
                 Err(err) => {}
             };
