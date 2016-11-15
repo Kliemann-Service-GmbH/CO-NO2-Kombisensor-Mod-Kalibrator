@@ -1,4 +1,5 @@
 use co_no2_kombisensor::sensor::{Sensor, SensorType, SI};
+use std::str::FromStr;
 
 #[derive(Debug)]
 pub struct Kombisensor {
@@ -81,5 +82,56 @@ impl Kombisensor {
             self.sensors[1].set_concentration_at_nullgas(modbus_registers[26]);
             self.sensors[1].set_concentration_at_messgas(modbus_registers[27]);
         }
+    }
+
+    /// Exportiert die eigene Datenstruktur in die Modbus Datenstruktur
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use kalibrator::*;
+    ///
+    /// let mut kombisensor = Kombisensor::new();
+    /// kombisensor.set_version("1.2.3".to_string());
+    ///
+    /// let modbus_registers = kombisensor.to_modbus_registers();
+    /// assert_eq!(modbus_registers[0], 1);
+    /// assert_eq!(modbus_registers[1], 2);
+    /// assert_eq!(modbus_registers[2], 3);
+    ///
+    /// assert_eq!(modbus_registers[3], 247);
+    /// ```
+    ///
+    pub fn to_modbus_registers(&self) -> Vec<u16> {
+        let mut modbus_registers: Vec<u16> = vec![0u16; 30];
+
+        let vec_version: Vec<u16> = self.version.split(".").map(|s| {
+            u16::from_str(s).unwrap_or(0u16)
+        }).collect();
+
+        modbus_registers[0] = vec_version[0];
+        modbus_registers[1] = vec_version[1];
+        modbus_registers[2] = vec_version[2];
+        modbus_registers[3] = self.modbus_address as u16;
+
+        modbus_registers[10] = self.sensors[0].get_number();
+        modbus_registers[11] = self.sensors[0].get_adc_value();
+        modbus_registers[12] = self.sensors[0].get_min_value();
+        modbus_registers[13] = self.sensors[0].get_max_value();
+        modbus_registers[14] = self.sensors[0].get_adc_at_nullgas();
+        modbus_registers[15] = self.sensors[0].get_adc_at_messgas();
+        modbus_registers[16] = self.sensors[0].get_concentration_at_nullgas();
+        modbus_registers[17] = self.sensors[0].get_concentration_at_messgas();
+
+        modbus_registers[20] = self.sensors[1].get_number();
+        modbus_registers[21] = self.sensors[1].get_adc_value();
+        modbus_registers[22] = self.sensors[1].get_min_value();
+        modbus_registers[23] = self.sensors[1].get_max_value();
+        modbus_registers[24] = self.sensors[1].get_adc_at_nullgas();
+        modbus_registers[25] = self.sensors[1].get_adc_at_messgas();
+        modbus_registers[26] = self.sensors[1].get_concentration_at_nullgas();
+        modbus_registers[27] = self.sensors[1].get_concentration_at_messgas();
+
+        modbus_registers
     }
 }

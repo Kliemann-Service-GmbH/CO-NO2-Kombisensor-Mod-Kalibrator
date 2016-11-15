@@ -8,25 +8,7 @@ use std::sync::{Arc, Mutex};
 type Result<T> = ::std::result::Result<T, CalibError>;
 
 
-/// Speichert ein Wert in einem Register
-///
-pub fn sensor_new_adc_at_nullgas(kombisensor: &Arc<Mutex<Kombisensor>>, adc_value: i32) -> Result<()> {
-    let mut kombisensor = kombisensor.lock().unwrap();
-    let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
-    let slave_id: u8 = kombisensor.get_modbus_address();
-    let register_address: i32 = 14;
-
-    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
-    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
-    try!(modbus.set_debug(true));
-    try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
-    try!(modbus.connect());
-    try!(modbus.write_register(register_address, adc_value));
-
-    Ok(())
-}
-
-/// Speichert ein Wert in einem Register
+/// Speichert den ADC Wert eines Sensors für Null.- oder Messgas
 ///
 pub fn sensor_new_adc_at(gas_type: &GasType, sensor_type: &SensorType, kombisensor: &Arc<Mutex<Kombisensor>>, adc_value: i32) -> Result<()> {
     let mut kombisensor = kombisensor.lock().unwrap();
@@ -147,15 +129,17 @@ pub fn kombisensor_from_modbus(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<
 
 /// Kombisensor Daten in der Kombisensor Hardware speichern
 ///
-pub fn kombisensor_to_modbus(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<()> {
+pub fn kombisensor_to_modbus(kombisensor: &Arc<Mutex<Kombisensor>>, values: &Vec<u16>) -> Result<()> {
     let mut kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
+
+    try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
     #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
     // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
-    let slave_id: u8 = kombisensor.get_modbus_address();
 
     try!(modbus.connect());
+    try!(modbus.write_registers(0, values));
 
     Ok(())
 }
@@ -189,13 +173,13 @@ mod tests {
     #[test]
     #[ignore] // Solange wir kein richtiges Mock oder wenigstens TCP/IP Modbus Haben
     fn test_enable_no2() {
-        let result = enable_sensor("NO2", true);
-        assert_eq!(result, Ok(()));
+        // let result = enable_sensor("NO2", true);
+        // assert_eq!(result, Ok(()));
     }
     #[test]
     #[ignore] // Solange wir kein richtiges Mock oder wenigstens TCP/IP Modbus Haben
     fn test_enable_co() {
-        let result = enable_sensor("CO", true);
-        assert_eq!(result, Ok(()));
+        // let result = enable_sensor("CO", true);
+        // assert_eq!(result, Ok(()));
     }
 }

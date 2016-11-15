@@ -2,16 +2,13 @@ use calib_error::CalibError;
 use co_no2_kombisensor::kombisensor::{Kombisensor};
 use co_no2_kombisensor::sensor::{Sensor, SensorType};
 use gas::GasType;
-use gui::gtk3::glib::translate::ToGlibPtr;
-use gui::gtk3::gobject_ffi;
 use gtk;
 use gtk::prelude::*;
+use gui::gtk3::glib::translate::ToGlibPtr;
+use gui::gtk3::gobject_ffi;
+use std::error::Error;
 use std::sync::{Arc, Mutex};
 
-
-fn callback_button_messpunkt(gas_type: GasType, sensor_type: &SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
-    ::gui::gtk3::view_messpunkt::launch(gas_type, sensor_type, &builder, &kombisensor);
-}
 
 fn fill_widgets(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>, sensor_num: usize) {
     let label_sensor_type: gtk::Label = builder.get_object("label_sensor_type").unwrap();
@@ -60,18 +57,30 @@ pub fn launch(sensor_type: SensorType, builder: &gtk::Builder, kombisensor: &Arc
 
     let id_button_messpunkt_nullgas = button_messpunkt_nullgas.connect_clicked(clone!(builder, kombisensor, sensor_type => move |_| {
         // println!("Button Nullgas, {:?}", sensor_type)
-        // callback_button_messpunkt(GasType::Nullgas, &sensor_type, &builder, &kombisensor);
         ::gui::gtk3::view_messpunkt::launch(GasType::Nullgas, &sensor_type, &builder, &kombisensor);
     }));
 
     let id_button_messpunkt_messgas = button_messpunkt_messgas.connect_clicked(clone!(builder, kombisensor, sensor_type => move |_| {
         // println!("Button Messgas, {:?}", sensor_type)
-        // callback_button_messpunkt(GasType::Messgas, &sensor_type, &builder, &kombisensor);
         ::gui::gtk3::view_messpunkt::launch(GasType::Messgas, &sensor_type, &builder, &kombisensor);
     }));
 
     let id_button_calibrator_save = button_calibrator_save.connect_clicked(clone!(builder, kombisensor => move |_| {
-        println!("callback Save für CO");
+        let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
+        let label_info_bar_message: gtk::Label = builder.get_object("label_info_bar_message").unwrap();
+        let mut values: Vec<u16> = vec![0; 30];
+
+        {
+            let kombisensor = kombisensor.lock().unwrap();
+            values = kombisensor.to_modbus_registers();
+        }
+        match ::commands::kombisensor_to_modbus(&kombisensor, &values) {
+            Ok(()) => {}
+            Err(err) => {
+                label_info_bar_message.set_text(err.description());
+                info_bar.show();
+            }
+        }
     }));
 
     // Zurueck Action
