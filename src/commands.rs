@@ -28,13 +28,18 @@ pub fn sensor_new_adc_at_nullgas(kombisensor: &Arc<Mutex<Kombisensor>>, adc_valu
 
 /// Speichert ein Wert in einem Register
 ///
-pub fn sensor_new_adc_at(gas_type: GasType, sensor_num: usize, kombisensor: &Arc<Mutex<Kombisensor>>, adc_value: i32) -> Result<()> {
+pub fn sensor_new_adc_at(gas_type: &GasType, sensor_type: &SensorType, kombisensor: &Arc<Mutex<Kombisensor>>, adc_value: i32) -> Result<()> {
     let mut kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
     let slave_id: u8 = kombisensor.get_modbus_address();
 
+    let sensor_num: usize = match *sensor_type {
+        SensorType::RaGasNO2 => 0,
+        SensorType::RaGasCO => 1,
+    };
+
     let mut register_address_offset = 0;
-    match gas_type {
+    match *gas_type {
         GasType::Nullgas => { register_address_offset = 14; }  // Register 14 oder 24 ADC Nullgas
         GasType::Messgas => { register_address_offset = 15; }  // Register 15 oder 25 ADC Nullgas
     }

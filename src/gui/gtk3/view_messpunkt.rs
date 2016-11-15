@@ -34,33 +34,6 @@ fn get_adc_value(sensor_type: &SensorType, builder: &gtk::Builder, kombisensor: 
     adc_value
 }
 
-fn save_adc_value(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>, sensor_num: usize, gas_type: GasType) {
-    let button_messpunkt_save: gtk::Button = builder.get_object("button_messpunkt_save").unwrap();
-    button_messpunkt_save.connect_clicked(clone!(builder, kombisensor => move |_| {
-        let check_button_adc_manuell: gtk::CheckButton = builder.get_object("check_button_adc_manuell").unwrap();
-
-        let mut adc_value: i32 = 0;
-
-        if check_button_adc_manuell.get_active() {
-            let adjustment_sensor_adc_value_at: gtk::Adjustment = builder.get_object("adjustment_sensor_adc_value_at").unwrap();
-            let mut kombisensor = kombisensor.lock().unwrap();
-            kombisensor.set_live_update(false);
-            adc_value = adjustment_sensor_adc_value_at.get_value() as i32;
-        } else {
-            // Live Update beenden und aktuellen ADC Wert aus der Sensor Struktur entnehmen.
-            // Die Kombisensor.-/ Sensor Structuren werden im Worker Task über Modbus abgeglichen
-            let mut kombisensor = kombisensor.lock().unwrap();
-            kombisensor.set_live_update(false);
-            adc_value = kombisensor.sensors[sensor_num].get_adc_value() as i32;
-        }
-
-        match gas_type {
-            GasType::Nullgas => { ::commands::sensor_new_adc_at(GasType::Nullgas, sensor_num, &kombisensor, adc_value); }
-            GasType::Messgas => { ::commands::sensor_new_adc_at(GasType::Messgas, sensor_num, &kombisensor, adc_value); }
-        }
-    }));
-}
-
 fn update_widgets(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>, sensor_num: usize) {
     gtk::timeout_add(100, clone!(kombisensor, builder => move || {
         let label_messpunkt_sensor_type: gtk::Label = builder.get_object("label_messpunkt_sensor_type").unwrap();
@@ -131,6 +104,7 @@ pub fn launch(gas_type: GasType, sensor_type: &SensorType, builder: &gtk::Builde
     let id_button_messpunkt_save = button_messpunkt_save.connect_clicked(clone!(gas_type, sensor_type, builder, kombisensor => move |_| {
         let adc_value = get_adc_value(&sensor_type, &builder, &kombisensor);
         println!("ADC: {}, Sensor: {:?}, GasType: {:?}", &adc_value, sensor_type, gas_type);
+        ::commands::sensor_new_adc_at(&gas_type, &sensor_type, &kombisensor, adc_value);
     }));
 
     // Weg zurück
