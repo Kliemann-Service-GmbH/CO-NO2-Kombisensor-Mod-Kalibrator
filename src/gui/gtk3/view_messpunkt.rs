@@ -76,18 +76,21 @@ fn update_widgets(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>,
     }));
 }
 
-pub fn launch(gas_type: GasType, sensor_type: SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
+pub fn launch(gas_type: GasType, sensor_type: &SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
     let stack_main: gtk::Stack = builder.get_object("stack_main").unwrap();
     let button_messpunkt_cancel: gtk::Button = builder.get_object("button_messpunkt_cancel").unwrap();
     let box_calibrator_view: gtk::Box = builder.get_object("box_calibrator_view").unwrap();
     let box_messpunkt_view: gtk::Box = builder.get_object("box_messpunkt_view").unwrap();
-
+    let check_button_adc_manuell: gtk::CheckButton = builder.get_object("check_button_adc_manuell").unwrap();
     stack_main.set_visible_child(&box_messpunkt_view);
+
+    // Default deaktiviere dem Manuel ADC Wert
+    check_button_adc_manuell.set_active(false);
 
     let mut kombisensor_liveupdate = kombisensor.lock().unwrap();
     kombisensor_liveupdate.set_live_update(true);
 
-    match sensor_type {
+    match *sensor_type {
         SensorType::RaGasNO2 => {
             update_widgets(&builder, &kombisensor, 0);
 
@@ -103,7 +106,7 @@ pub fn launch(gas_type: GasType, sensor_type: SensorType, builder: &gtk::Builder
     // Weg zurück
     button_messpunkt_cancel.connect_clicked(clone!(kombisensor => move |_| {
         let mut kombisensor = kombisensor.lock().unwrap();
-
+        // Beende Live Update
         kombisensor.set_live_update(false);
         stack_main.set_visible_child(&box_calibrator_view);
     }));
