@@ -11,13 +11,12 @@ build = "build.rs"
 
 [dependencies]
 byteorder = "*"
-gdk = { version = "0.5.0" }
-gio = "^0"
-glib = "*"
-glib-sys = "*"
-gobject-sys = "*"
-gtk = { version = "0.1.0", features = ["v3_16"] }
-gtk-sys = "*"
 libc = "*"
+gdk = { git = "https://github.com/gtk-rs/gdk.git" }
+gtk = { git = "https://github.com/gtk-rs/gtk.git", features = ["v3_16"] }
+glib = { git = "https://github.com/gtk-rs/glib.git" }
+glib-sys = { git = "https://github.com/gtk-rs/sys.git" }
+gtk-sys = { git = "https://github.com/gtk-rs/sys.git" }
+gio = { git = "https://github.com/gtk-rs/gio.git" }
+gobject-sys = { git = "https://github.com/gtk-rs/sys" }
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
-# xmz_server = { git = "https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git" }

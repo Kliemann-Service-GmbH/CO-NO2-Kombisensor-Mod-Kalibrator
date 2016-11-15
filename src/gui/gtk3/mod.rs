@@ -1,24 +1,20 @@
-/// Das ist der Controller zum Index View des Kalibrators.
-///
-/// Von hier aus wird durch die Anwendung navigiert. Die Views auf den anderen Stacks werden bei bedarf gefüllt.
-///
-extern crate libc;
+#![feature(libc)] extern crate libc;
 extern crate glib_sys as glib_ffi;
 extern crate gtk_sys as gtk_ffi;
 extern crate gobject_sys as gobject_ffi;
 extern crate glib;
 
-use std::error::Error;
-use configuration::Configuration;
-use self::glib::translate::ToGlibPtr;
-use self::glib_ffi::gpointer;
+use co_no2_kombisensor::*;
+use co_no2_kombisensor::sensor::SensorType;
 use commands;
+use configuration::Configuration;
 use gdk::enums::key;
 use gtk;
 use gtk::prelude::*;
+use self::glib_ffi::gpointer;
+use self::glib::translate::ToGlibPtr;
+use std::error::Error;
 use std::path::Path;
-use co_no2_kombisensor::*;
-use co_no2_kombisensor::sensor::SensorType;
 use std::sync::{Arc, Mutex};
 
 mod view_calibrator;

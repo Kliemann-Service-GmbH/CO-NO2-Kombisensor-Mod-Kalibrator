@@ -1,10 +1,12 @@
 use calib_error::CalibError;
-use co_no2_kombisensor::sensor::{Sensor, SensorType};
 use co_no2_kombisensor::kombisensor::{Kombisensor};
+use co_no2_kombisensor::sensor::{Sensor, SensorType};
 use gas::GasType;
-use std::sync::{Arc, Mutex};
+use gui::gtk3::glib::translate::ToGlibPtr;
+use gui::gtk3::gobject_ffi;
 use gtk;
 use gtk::prelude::*;
+use std::sync::{Arc, Mutex};
 
 
 fn callback_button_messpunkt(gas_type: GasType, sensor_type: SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
@@ -56,22 +58,27 @@ pub fn launch(sensor_type: SensorType, builder: &gtk::Builder, kombisensor: &Arc
     // Stack Layer anzeigen
     stack_main.set_visible_child(&box_calibrator_view);
 
-    button_messpunkt_nullgas.connect_clicked(clone!(builder, kombisensor, sensor_type => move |_| {
+    let id_button_messpunkt_nullgas = button_messpunkt_nullgas.connect_clicked(clone!(builder, kombisensor, sensor_type => move |_| {
         // callback_button_messpunkt(GasType::Nullgas, SensorType::RaGasCO, &builder, &kombisensor);
         println!("Button Nullgas, {:?}", sensor_type)
     }));
 
-    button_messpunkt_messgas.connect_clicked(clone!(builder, kombisensor, sensor_type => move |_| {
+    let id_button_messpunkt_messgas = button_messpunkt_messgas.connect_clicked(clone!(builder, kombisensor, sensor_type => move |_| {
         // callback_button_messpunkt(GasType::Messgas, SensorType::RaGasCO, &builder, &kombisensor);
         println!("Button Messgas, {:?}", sensor_type)
     }));
 
-    button_calibrator_save.connect_clicked(clone!(builder, kombisensor => move |_| {
+    let id_button_calibrator_save = button_calibrator_save.connect_clicked(clone!(builder, kombisensor => move |_| {
         println!("callback Save für CO");
     }));
 
     // Zurueck Action
     button_calibrator_cancel.connect_clicked(move |_| {
+        unsafe {
+            if gobject_ffi::g_signal_handler_is_connected(button_messpunkt_nullgas.to_glib_none().0, id_button_messpunkt_nullgas) == 1 {
+                gobject_ffi::g_signal_handler_disconnect(button_messpunkt_nullgas.to_glib_none().0, id_button_messpunkt_nullgas);
+            }
+        }
         stack_main.set_visible_child(&box_index_view);
     });
 
