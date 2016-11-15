@@ -10,12 +10,19 @@ use std::error::Error;
 use std::sync::{Arc, Mutex};
 
 
-fn fill_widgets(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>, sensor_num: usize) {
+fn fill_widgets(sensor_type: &SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
     let label_sensor_type: gtk::Label = builder.get_object("label_sensor_type").unwrap();
-    if sensor_num == 0 {
-        label_sensor_type.set_text("Nemoto™ EC NAP-550 - NO2");
-    } else {
-        label_sensor_type.set_text("Nemoto™ EC NAP-505 - CO");
+    let mut sensor_num: usize = 0;
+
+    match *sensor_type {
+        SensorType::RaGasNO2 => {
+            label_sensor_type.set_text("Nemoto™ EC NAP-550 - NO2");
+            sensor_num = 0;
+        }
+        SensorType::RaGasCO => {
+            label_sensor_type.set_text("Nemoto™ EC NAP-505 - CO");
+            sensor_num = 1;
+        }
     }
 
     let kombisensor = kombisensor.lock().unwrap();
@@ -45,10 +52,10 @@ pub fn launch(sensor_type: SensorType, builder: &gtk::Builder, kombisensor: &Arc
 
     match sensor_type {
         SensorType::RaGasNO2 => {
-            fill_widgets(&builder, &kombisensor, 0);
+            fill_widgets(&sensor_type, &builder, &kombisensor);
         },
         SensorType::RaGasCO => {
-            fill_widgets(&builder, &kombisensor, 1);
+            fill_widgets(&sensor_type, &builder, &kombisensor);
         },
     }
 
