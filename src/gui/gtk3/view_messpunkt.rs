@@ -1,11 +1,38 @@
+use co_no2_kombisensor::kombisensor::{Kombisensor};
+use co_no2_kombisensor::sensor::{SensorType};
+use gas::GasType;
 use gtk;
 use gtk::prelude::*;
-use std::sync::{Arc, Mutex};
+use gui::gtk3::glib::translate::ToGlibPtr;
+use gui::gtk3::gobject_ffi;
 use std::borrow::Borrow;
-use co_no2_kombisensor::sensor::{SensorType};
-use co_no2_kombisensor::kombisensor::{Kombisensor};
-use gas::GasType;
+use std::sync::{Arc, Mutex};
 
+
+fn get_adc_value(sensor_type: &SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) -> i32 {
+    let mut adc_value: i32 = 0;
+    let check_button_adc_manuell: gtk::CheckButton = builder.get_object("check_button_adc_manuell").unwrap();
+
+    let sensor_num: usize = match *sensor_type {
+        SensorType::RaGasNO2 => 0,
+        SensorType::RaGasCO => 1,
+    };
+
+    if check_button_adc_manuell.get_active() {
+        let adjustment_sensor_adc_value_at: gtk::Adjustment = builder.get_object("adjustment_sensor_adc_value_at").unwrap();
+        let mut kombisensor = kombisensor.lock().unwrap();
+        kombisensor.set_live_update(false);
+        adc_value = adjustment_sensor_adc_value_at.get_value() as i32;
+    } else {
+        // Live Update beenden und aktuellen ADC Wert aus der Sensor Struktur entnehmen.
+        // Die Kombisensor.-/ Sensor Structuren werden im Worker Task über Modbus abgeglichen
+        let mut kombisensor = kombisensor.lock().unwrap();
+        kombisensor.set_live_update(false);
+        adc_value = kombisensor.sensors[sensor_num].get_adc_value() as i32;
+    }
+
+    adc_value
+}
 
 fn save_adc_value(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>, sensor_num: usize, gas_type: GasType) {
     let button_messpunkt_save: gtk::Button = builder.get_object("button_messpunkt_save").unwrap();
@@ -77,11 +104,13 @@ fn update_widgets(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>,
 }
 
 pub fn launch(gas_type: GasType, sensor_type: &SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
-    let stack_main: gtk::Stack = builder.get_object("stack_main").unwrap();
-    let button_messpunkt_cancel: gtk::Button = builder.get_object("button_messpunkt_cancel").unwrap();
     let box_calibrator_view: gtk::Box = builder.get_object("box_calibrator_view").unwrap();
     let box_messpunkt_view: gtk::Box = builder.get_object("box_messpunkt_view").unwrap();
+    let button_messpunkt_cancel: gtk::Button = builder.get_object("button_messpunkt_cancel").unwrap();
+    let button_messpunkt_save: gtk::Button = builder.get_object("button_messpunkt_save").unwrap();
     let check_button_adc_manuell: gtk::CheckButton = builder.get_object("check_button_adc_manuell").unwrap();
+    let stack_main: gtk::Stack = builder.get_object("stack_main").unwrap();
+
     stack_main.set_visible_child(&box_messpunkt_view);
 
     // Default deaktiviere dem Manuel ADC Wert
@@ -93,21 +122,29 @@ pub fn launch(gas_type: GasType, sensor_type: &SensorType, builder: &gtk::Builde
     match *sensor_type {
         SensorType::RaGasNO2 => {
             update_widgets(&builder, &kombisensor, 0);
-
-            save_adc_value(&builder, &kombisensor, 0, gas_type);
         }
         SensorType::RaGasCO => {
             update_widgets(&builder, &kombisensor, 1);
-
-            save_adc_value(&builder, &kombisensor, 1, gas_type);
         }
     }
+
+    let id_button_messpunkt_save = button_messpunkt_save.connect_clicked(clone!(gas_type, sensor_type, builder, kombisensor => move |_| {
+        let adc_value = get_adc_value(&sensor_type, &builder, &kombisensor);
+        println!("ADC: {}, Sensor: {:?}, GasType: {:?}", &adc_value, sensor_type, gas_type);
+    }));
 
     // Weg zurück
     button_messpunkt_cancel.connect_clicked(clone!(kombisensor => move |_| {
         let mut kombisensor = kombisensor.lock().unwrap();
         // Beende Live Update
         kombisensor.set_live_update(false);
+
+        unsafe {
+            if gobject_ffi::g_signal_handler_is_connected(button_messpunkt_save.to_glib_none().0, id_button_messpunkt_save) == 1 {
+                gobject_ffi::g_signal_handler_disconnect(button_messpunkt_save.to_glib_none().0, id_button_messpunkt_save);
+            }
+        }
+
         stack_main.set_visible_child(&box_calibrator_view);
     }));
 }

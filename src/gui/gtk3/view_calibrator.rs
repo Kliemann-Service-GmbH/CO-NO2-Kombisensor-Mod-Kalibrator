@@ -9,7 +9,7 @@ use gtk::prelude::*;
 use std::sync::{Arc, Mutex};
 
 
-fn callback_button_messpunkt(gas_type: GasType, sensor_type: SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
+fn callback_button_messpunkt(gas_type: GasType, sensor_type: &SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
     ::gui::gtk3::view_messpunkt::launch(gas_type, sensor_type, &builder, &kombisensor);
 }
 
@@ -59,13 +59,15 @@ pub fn launch(sensor_type: SensorType, builder: &gtk::Builder, kombisensor: &Arc
     stack_main.set_visible_child(&box_calibrator_view);
 
     let id_button_messpunkt_nullgas = button_messpunkt_nullgas.connect_clicked(clone!(builder, kombisensor, sensor_type => move |_| {
-        // callback_button_messpunkt(GasType::Nullgas, SensorType::RaGasCO, &builder, &kombisensor);
-        println!("Button Nullgas, {:?}", sensor_type)
+        // println!("Button Nullgas, {:?}", sensor_type)
+        // callback_button_messpunkt(GasType::Nullgas, &sensor_type, &builder, &kombisensor);
+        ::gui::gtk3::view_messpunkt::launch(GasType::Nullgas, &sensor_type, &builder, &kombisensor);
     }));
 
     let id_button_messpunkt_messgas = button_messpunkt_messgas.connect_clicked(clone!(builder, kombisensor, sensor_type => move |_| {
-        // callback_button_messpunkt(GasType::Messgas, SensorType::RaGasCO, &builder, &kombisensor);
-        println!("Button Messgas, {:?}", sensor_type)
+        // println!("Button Messgas, {:?}", sensor_type)
+        // callback_button_messpunkt(GasType::Messgas, &sensor_type, &builder, &kombisensor);
+        ::gui::gtk3::view_messpunkt::launch(GasType::Messgas, &sensor_type, &builder, &kombisensor);
     }));
 
     let id_button_calibrator_save = button_calibrator_save.connect_clicked(clone!(builder, kombisensor => move |_| {
@@ -77,6 +79,16 @@ pub fn launch(sensor_type: SensorType, builder: &gtk::Builder, kombisensor: &Arc
         unsafe {
             if gobject_ffi::g_signal_handler_is_connected(button_messpunkt_nullgas.to_glib_none().0, id_button_messpunkt_nullgas) == 1 {
                 gobject_ffi::g_signal_handler_disconnect(button_messpunkt_nullgas.to_glib_none().0, id_button_messpunkt_nullgas);
+            }
+        }
+        unsafe {
+            if gobject_ffi::g_signal_handler_is_connected(button_messpunkt_messgas.to_glib_none().0, id_button_messpunkt_messgas) == 1 {
+                gobject_ffi::g_signal_handler_disconnect(button_messpunkt_messgas.to_glib_none().0, id_button_messpunkt_messgas);
+            }
+        }
+        unsafe {
+            if gobject_ffi::g_signal_handler_is_connected(button_calibrator_save.to_glib_none().0, id_button_calibrator_save) == 1 {
+                gobject_ffi::g_signal_handler_disconnect(button_calibrator_save.to_glib_none().0, id_button_calibrator_save);
             }
         }
         stack_main.set_visible_child(&box_index_view);
