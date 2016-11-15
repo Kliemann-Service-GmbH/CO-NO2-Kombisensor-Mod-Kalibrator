@@ -101,7 +101,7 @@ pub fn launch(gas_type: GasType, sensor_type: &SensorType, builder: &gtk::Builde
         }
     }
 
-    let id_button_messpunkt_save: ::gui::gtk3::libc::c_ulong = button_messpunkt_save.connect_clicked(clone!(gas_type, sensor_type, builder, kombisensor => move |_| {
+    let id_button_messpunkt_save = button_messpunkt_save.connect_clicked(clone!(gas_type, sensor_type, builder, kombisensor => move |_| {
         let adc_value = get_adc_value(&sensor_type, &builder, &kombisensor);
         println!("ADC: {}, Sensor: {:?}, GasType: {:?}", &adc_value, sensor_type, gas_type);
         ::commands::sensor_new_adc_at(&gas_type, &sensor_type, &kombisensor, adc_value);
