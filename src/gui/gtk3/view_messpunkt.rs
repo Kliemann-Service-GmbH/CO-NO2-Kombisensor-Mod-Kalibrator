@@ -109,13 +109,15 @@ pub fn launch(gas_type: GasType, sensor_type: &SensorType, builder: &gtk::Builde
 
     // Weg zurück
     button_messpunkt_cancel.connect_clicked(clone!(kombisensor => move |_| {
+        use gui::gtk3::libc::c_ulong;
+
         let mut kombisensor = kombisensor.lock().unwrap();
         // Beende Live Update
         kombisensor.set_live_update(false);
 
         unsafe {
             if gobject_ffi::g_signal_handler_is_connected(button_messpunkt_save.to_glib_none().0, id_button_messpunkt_save) == 1 {
-                gobject_ffi::g_signal_handler_disconnect(button_messpunkt_save.to_glib_none().0, id_button_messpunkt_save);
+                gobject_ffi::g_signal_handler_disconnect(button_messpunkt_save.to_glib_none().0, id_button_messpunkt_save as c_ulong);
             }
         }
 
