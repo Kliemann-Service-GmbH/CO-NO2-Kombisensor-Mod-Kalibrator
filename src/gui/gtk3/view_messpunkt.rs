@@ -116,7 +116,7 @@ pub fn launch(gas_type: GasType, sensor_type: &SensorType, builder: &gtk::Builde
         kombisensor.set_live_update(false);
 
         unsafe {
-            if gobject_ffi::g_signal_handler_is_connected(button_messpunkt_save.to_glib_none().0, id_button_messpunkt_save) == 1 {
+            if gobject_ffi::g_signal_handler_is_connected(button_messpunkt_save.to_glib_none().0, id_button_messpunkt_save as c_ulong) == 1 {
                 gobject_ffi::g_signal_handler_disconnect(button_messpunkt_save.to_glib_none().0, id_button_messpunkt_save as c_ulong);
             }
         }

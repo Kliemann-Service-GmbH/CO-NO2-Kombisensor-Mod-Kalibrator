@@ -123,17 +123,17 @@ pub fn launch(sensor_type: SensorType, builder: &gtk::Builder, kombisensor: &Arc
         use gui::gtk3::libc::c_ulong;
 
         unsafe {
-            if gobject_ffi::g_signal_handler_is_connected(button_messpunkt_nullgas.to_glib_none().0, id_button_messpunkt_nullgas) == 1 {
+            if gobject_ffi::g_signal_handler_is_connected(button_messpunkt_nullgas.to_glib_none().0, id_button_messpunkt_nullgas as c_ulong) == 1 {
                 gobject_ffi::g_signal_handler_disconnect(button_messpunkt_nullgas.to_glib_none().0, id_button_messpunkt_nullgas as c_ulong);
             }
         }
         unsafe {
-            if gobject_ffi::g_signal_handler_is_connected(button_messpunkt_messgas.to_glib_none().0, id_button_messpunkt_messgas) == 1 {
+            if gobject_ffi::g_signal_handler_is_connected(button_messpunkt_messgas.to_glib_none().0, id_button_messpunkt_messgas as c_ulong) == 1 {
                 gobject_ffi::g_signal_handler_disconnect(button_messpunkt_messgas.to_glib_none().0, id_button_messpunkt_messgas as c_ulong);
             }
         }
         unsafe {
-            if gobject_ffi::g_signal_handler_is_connected(button_calibrator_save.to_glib_none().0, id_button_calibrator_save) == 1 {
+            if gobject_ffi::g_signal_handler_is_connected(button_calibrator_save.to_glib_none().0, id_button_calibrator_save as c_ulong) == 1 {
                 gobject_ffi::g_signal_handler_disconnect(button_calibrator_save.to_glib_none().0, id_button_calibrator_save as c_ulong);
             }
         }
