@@ -10,16 +10,15 @@ type Result<T> = ::std::result::Result<T, CalibError>;
 
 /// Speichert den ADC Wert eines Sensors für Null.- oder Messgas
 ///
+#[allow(unused_assignments)]
 pub fn sensor_new_adc_at(gas_type: &GasType, sensor_type: &SensorType, kombisensor: &Arc<Mutex<Kombisensor>>, adc_value: i32) -> Result<()> {
-    let mut kombisensor = kombisensor.lock().unwrap();
+    let kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
-    let slave_id: u8 = kombisensor.get_modbus_address();
 
     let sensor_num: usize = match *sensor_type {
         SensorType::RaGasNO2 => 0,
         SensorType::RaGasCO => 1,
     };
-
     let mut register_address_offset = 0;
     match *gas_type {
         GasType::Nullgas => { register_address_offset = 14; }  // Register 14 oder 24 ADC Nullgas
@@ -41,9 +40,8 @@ pub fn sensor_new_adc_at(gas_type: &GasType, sensor_type: &SensorType, kombisens
 /// Speichert eine neue Modbus Adresse im Kombisensor
 ///
 pub fn kombisensor_new_modbus_address(kombisensor: &Arc<Mutex<Kombisensor>>, new_modbus_address: i32) -> Result<()> {
-    let mut kombisensor = kombisensor.lock().unwrap();
+    let kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
-    let slave_id: u8 = kombisensor.get_modbus_address();
     let register_address: i32 = 3; // Im Modbus Register[3] ist die Modbus Adresse gespeichert.
 
     #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
@@ -61,8 +59,9 @@ pub fn kombisensor_new_modbus_address(kombisensor: &Arc<Mutex<Kombisensor>>, new
 /// Diese Funktion sendet ein raw request zu dem Server, der Modbus Funktion Code 0x08,
 /// Sub-Funktion Code 0x01 startet die Sensor Hardware neu.
 ///
+#[allow(dead_code)]
 pub fn kombisensor_restart_via_modbus(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<()> {
-    let mut kombisensor = kombisensor.lock().unwrap();
+    let kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
     #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
     // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
@@ -129,8 +128,9 @@ pub fn kombisensor_from_modbus(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<
 
 /// Kombisensor Daten in der Kombisensor Hardware speichern
 ///
+#[allow(dead_code)]
 pub fn kombisensor_to_modbus(kombisensor: &Arc<Mutex<Kombisensor>>, values: &Vec<u16>) -> Result<()> {
-    let mut kombisensor = kombisensor.lock().unwrap();
+    let kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
 
     try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
@@ -149,7 +149,7 @@ pub fn kombisensor_to_modbus(kombisensor: &Arc<Mutex<Kombisensor>>, values: &Vec
 /// Diese Funktion sendet entweder das Modbus Coil 0 (NO2 Sensor) oder das Coil 16 (CO Sensor).
 /// Der Coil status (an/ aus) wird mit dem Parameter sensor_state übergeben.
 pub fn enable_sensor(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_type: SensorType, sensor_state: bool) -> Result<()> {
-    let mut kombisensor = kombisensor.lock().unwrap();
+    let kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
     try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
     #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,

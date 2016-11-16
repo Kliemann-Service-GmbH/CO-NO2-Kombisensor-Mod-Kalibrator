@@ -6,6 +6,8 @@ pub enum SensorType {
     RaGasCO,
 }
 
+#[allow(dead_code)]
+#[allow(non_camel_case_types)]
 #[derive(Debug)]
 pub enum SI {
     none,
@@ -83,6 +85,7 @@ impl Sensor {
         self.config = config;
     }
 // GETTER
+    #[allow(dead_code)]
     pub fn get_number(&self) -> u16 {
         self.number
     }
@@ -99,10 +102,12 @@ impl Sensor {
         self.max_value
     }
 
+    #[allow(dead_code)]
     pub fn get_adc_at_nullgas(&self) -> u16 {
         self.adc_at_nullgas
     }
 
+    #[allow(dead_code)]
     pub fn get_adc_at_messgas(&self) -> u16 {
         self.adc_at_messgas
     }
@@ -115,6 +120,7 @@ impl Sensor {
         self.concentration_at_messgas
     }
 
+    #[allow(dead_code)]
     pub fn get_config(&self) -> u16 {
         self.config
     }
@@ -159,6 +165,7 @@ impl Sensor {
     /// let sensor = Sensor::new(SensorType::RaGasNO2);
     /// assert_eq!(sensor.is_enabled(), false);
     /// ```
+    #[allow(dead_code)]
     pub fn is_enabled(&self) -> bool {
         match (self.config >> 1) & 1 {
             1 => true,

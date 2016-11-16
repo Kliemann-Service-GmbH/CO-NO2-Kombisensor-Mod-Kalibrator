@@ -1,4 +1,4 @@
-use co_no2_kombisensor::sensor::{Sensor, SensorType, SI};
+use co_no2_kombisensor::sensor::{Sensor, SensorType};
 use std::str::FromStr;
 
 #[derive(Debug)]
@@ -104,6 +104,7 @@ impl Kombisensor {
     /// assert_eq!(modbus_registers[3], 247);
     /// ```
     ///
+    #[allow(dead_code)]
     pub fn to_modbus_registers(&self) -> Vec<u16> {
         let mut modbus_registers: Vec<u16> = vec![0u16; 30];
 

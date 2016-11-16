@@ -1,12 +1,11 @@
 use calib_error::CalibError;
 use co_no2_kombisensor::kombisensor::{Kombisensor};
-use co_no2_kombisensor::sensor::{Sensor, SensorType};
+use co_no2_kombisensor::sensor::{SensorType};
 use gas::GasType;
 use gtk;
 use gtk::prelude::*;
 use gui::gtk3::glib::translate::ToGlibPtr;
 use gui::gtk3::gobject_ffi;
-use std::error::Error;
 use std::sync::{Arc, Mutex};
 
 
@@ -49,9 +48,10 @@ use std::sync::{Arc, Mutex};
 //        }
 //    }
 //}
-
+#[allow(unused_variables)]
 fn callback_button_calibrator_view_save_min(sensor_type: &SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {}
 
+#[allow(unused_assignments)]
 fn fill_widgets(sensor_type: &SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
     let adjustment_sensor_concentration_at_messgas: gtk::Adjustment = builder.get_object("adjustment_sensor_concentration_at_messgas").unwrap();
     let adjustment_sensor_concentration_at_nullgas: gtk::Adjustment = builder.get_object("adjustment_sensor_concentration_at_nullgas").unwrap();

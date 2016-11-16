@@ -1,4 +1,4 @@
-#![feature(libc)] extern crate libc;
+extern crate libc;
 extern crate glib_sys as glib_ffi;
 extern crate gtk_sys as gtk_ffi;
 extern crate gobject_sys as gobject_ffi;
@@ -14,7 +14,6 @@ use gtk::prelude::*;
 use self::glib_ffi::gpointer;
 use self::glib::translate::ToGlibPtr;
 use std::error::Error;
-use std::path::Path;
 use std::sync::{Arc, Mutex};
 
 mod view_calibrator;
@@ -25,18 +24,15 @@ mod view_liveview;
 
 // Callback "Sensor auslesen"
 fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
-    use std::mem::transmute;
-
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
-    let button_discover: gtk::Button = builder.get_object("button_discover").unwrap();
     let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
     let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
     let button_live_view: gtk::Button = builder.get_object("button_live_view").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
-    let label_co: gtk::Label = builder.get_object("label_co").unwrap();
     let label_info_bar_message: gtk::Label = builder.get_object("label_info_bar_message").unwrap();
+    let label_co: gtk::Label = builder.get_object("label_co").unwrap();
     let label_kombisensor_version: gtk::Label = builder.get_object("label_kombisensor_version").unwrap();
     let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
     let spin_button_modbus_address: gtk::SpinButton = builder.get_object("spin_button_modbus_address").unwrap();
@@ -91,10 +87,8 @@ fn callback_button_live_view(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kom
 fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>, configuration: &Arc<Mutex<Configuration>>) {
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
-    let button_discover: gtk::Button = builder.get_object("button_discover").unwrap();
     let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
     let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
-    let button_live_view: gtk::Button = builder.get_object("button_live_view").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
     let label_co: gtk::Label = builder.get_object("label_co").unwrap();
@@ -102,7 +96,6 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
     let label_kombisensor_version: gtk::Label = builder.get_object("label_kombisensor_version").unwrap();
     let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
     let spin_button_modbus_address: gtk::SpinButton = builder.get_object("spin_button_modbus_address").unwrap();
-    let window: gtk::Window = builder.get_object("main_window").unwrap();
 
     // Get config from Arc<Mutex<>>
     let configuration = configuration.lock().unwrap();
@@ -113,7 +106,7 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
                 Ok(_) => {
                     // Wird ein Sensor erkannt dann wird als nächstes die Kombisensor Datenstruktur
                     // mit den Daten der echten Hardware gefüllt.
-                    commands::kombisensor_from_modbus(&kombisensor);
+                    let _ = commands::kombisensor_from_modbus(&kombisensor);
 
                     // Label "Firmware Version" füllen
                     label_kombisensor_version.set_text(&kombisensor.lock().unwrap().get_version());
@@ -132,7 +125,7 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
                     spin_button_modbus_address.set_value(kombisensor.lock().unwrap().get_modbus_address() as f64);
                     println!("Erkannter Sensor:\n{:#?}\n", kombisensor);
                 }
-                Err(err) => {}
+                Err(_) => {}
             };
         }
         Err(err) => {
@@ -154,8 +147,6 @@ fn callback_button_enable_sensor(builder: &gtk::Builder, button: &gtk::ToggleBut
     let label_info_bar_message: gtk::Label = builder.get_object("label_info_bar_message").unwrap();
     // Get config from Arc<Mutex<>>
     let configuration = configuration.lock().unwrap();
-
-    let mut sensor_type: String = String::new();
     let sensor_status = !button.get_active();
 
     // Checke Serielles Interface
@@ -197,16 +188,18 @@ fn callback_button_save_modbus_address(builder: &gtk::Builder, kombisensor: &Arc
     let modbus_address: [u32; 2] = unsafe { ::std::mem::transmute(modbus_address)};
     let new_modbus_address: i32 = modbus_address[0] as i32;
 
-    commands::kombisensor_new_modbus_address(kombisensor, new_modbus_address);
+    let _ = commands::kombisensor_new_modbus_address(kombisensor, new_modbus_address);
 }
 
 // Callback Kalibrieren Button NO2 geklickt
 fn callback_button_calib_no2(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
-    view_calibrator::launch(SensorType::RaGasNO2, &builder, &kombisensor);
+    let _ = view_calibrator::launch(SensorType::RaGasNO2, &builder, &kombisensor);
 }
 // Callback Kalibrieren Button CO geklickt
-fn callback_button_calib_co(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
-    view_calibrator::launch(SensorType::RaGasCO, &builder, &kombisensor);
+fn callback_button_calib_co(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<(), Box<::std::error::Error>>{
+    try!(view_calibrator::launch(SensorType::RaGasCO, &builder, &kombisensor));
+
+    Ok(())
 }
 
 // Basic Setup des Fensters
@@ -285,9 +278,9 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
 
     info_bar.hide();
     // Close callback
-    info_bar.connect_response(clone!(info_bar => move |info_bar, _| {
+    info_bar.connect_response(move |info_bar, _| {
         info_bar.hide();
-    }));
+    });
 
     button_sensor_connect.connect_clicked(clone!(builder, kombisensor => move |_| {
         callback_button_sensor_connect(&builder, &kombisensor);
@@ -299,28 +292,28 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
 
     // Callback Senor erkennen, Discovery
     button_discover.connect_clicked(clone!(builder, kombisensor, configuration => move |_| {
-        callback_button_discover(&builder, &kombisensor, &configuration);
+        let _ = callback_button_discover(&builder, &kombisensor, &configuration);
     }));
 
     // Callback 'button_save_modbus_address' geklickt
     button_save_modbus_address.connect_clicked(clone!(builder, kombisensor => move |_| {
-        callback_button_save_modbus_address(&builder, &kombisensor);
+        let _ = callback_button_save_modbus_address(&builder, &kombisensor);
     }));
 
     button_enable_no2.connect_clicked(clone!(builder, button_enable_no2, kombisensor, configuration => move |_| {
-        callback_button_enable_sensor(&builder, &button_enable_no2, &kombisensor, &configuration);
+        let _ = callback_button_enable_sensor(&builder, &button_enable_no2, &kombisensor, &configuration);
     }));
 
     button_enable_co.connect_clicked(clone!(builder, button_enable_co, kombisensor, configuration => move |_| {
-        callback_button_enable_sensor(&builder, &button_enable_co, &kombisensor, &configuration);
+        let _ = callback_button_enable_sensor(&builder, &button_enable_co, &kombisensor, &configuration);
     }));
 
     button_calib_co.connect_clicked(clone!(builder, kombisensor => move |_| {
-        callback_button_calib_co(&builder, &kombisensor);
+        let _ = callback_button_calib_co(&builder, &kombisensor);
     }));
 
     button_calib_no2.connect_clicked(clone!(builder, kombisensor => move |_| {
-        callback_button_calib_no2(&builder, &kombisensor);
+        let _ = callback_button_calib_no2(&builder, &kombisensor);
     }));
 
     // Beende Programm wenn das Fenster geschlossen wurde
@@ -346,12 +339,12 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     use std::thread;
     use std::time::Duration;
 
-    thread::spawn(clone!(kombisensor, builder => move || {
+    thread::spawn(clone!(kombisensor => move || {
         loop {
             // Ein weiterer Klone des Kombisensors ist nötig, zur Abfrage des Live Update Flags
             let kombisensor1 = kombisensor.clone();
             if kombisensor1.lock().unwrap().get_live_update() {
-                commands::kombisensor_from_modbus(&kombisensor);
+                let _ = commands::kombisensor_from_modbus(&kombisensor);
             }
 
             thread::sleep(Duration::from_millis(500));

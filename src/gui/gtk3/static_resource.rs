@@ -1,4 +1,3 @@
-#![feature(libc)]
 extern crate gio;
 extern crate glib;
 extern crate libc;

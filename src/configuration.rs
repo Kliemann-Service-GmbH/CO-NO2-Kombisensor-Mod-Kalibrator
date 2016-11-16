@@ -14,10 +14,11 @@ impl Configuration {
         }
     }
 
+    #[allow(dead_code)]
     pub fn get_serial_interface(&self) -> &'static str {
         self.serial_interface
     }
-
+    #[allow(dead_code)]
     pub fn set_serial_interface(&mut self, interface: &'static str) {
         self.serial_interface  = interface
     }

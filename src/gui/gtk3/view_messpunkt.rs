@@ -5,10 +5,10 @@ use gtk;
 use gtk::prelude::*;
 use gui::gtk3::glib::translate::ToGlibPtr;
 use gui::gtk3::gobject_ffi;
-use std::borrow::Borrow;
 use std::sync::{Arc, Mutex};
 
 
+#[allow(unused_assignments)]
 fn get_adc_value(sensor_type: &SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) -> i32 {
     let mut adc_value: i32 = 0;
     let check_button_adc_manuell: gtk::CheckButton = builder.get_object("check_button_adc_manuell").unwrap();
@@ -34,11 +34,12 @@ fn get_adc_value(sensor_type: &SensorType, builder: &gtk::Builder, kombisensor: 
     adc_value
 }
 
+#[allow(unused_assignments)]
 fn update_widgets(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>, sensor_num: usize) {
     gtk::timeout_add(100, clone!(kombisensor, builder => move || {
         let label_messpunkt_sensor_type: gtk::Label = builder.get_object("label_messpunkt_sensor_type").unwrap();
         let label_messpunkt_adc: gtk::Label = builder.get_object("label_messpunkt_adc").unwrap();
-        let label_messpunkt_mV: gtk::Label = builder.get_object("label_messpunkt_mV").unwrap();
+        let label_messpunkt_mv: gtk::Label = builder.get_object("label_messpunkt_mv").unwrap();
 
         // Wurde der Checkbutton getrueckt dann gibts kein linve update.
         // Dadurch das der CheckButton das Live Update beendet, wird auch dieser Thread beendet, siehe weiter unten.
@@ -65,7 +66,7 @@ fn update_widgets(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>,
             mv_value = kombisensor.sensors[sensor_num].get_mv().to_string();
         }
         label_messpunkt_adc.set_text(&adc_value);
-        label_messpunkt_mV.set_text(&mv_value);
+        label_messpunkt_mv.set_text(&mv_value);
 
         let kombisensor = kombisensor.lock().unwrap();
         if kombisensor.get_live_update() {
@@ -104,7 +105,7 @@ pub fn launch(gas_type: GasType, sensor_type: &SensorType, builder: &gtk::Builde
     let id_button_messpunkt_save = button_messpunkt_save.connect_clicked(clone!(gas_type, sensor_type, builder, kombisensor => move |_| {
         let adc_value = get_adc_value(&sensor_type, &builder, &kombisensor);
         println!("ADC: {}, Sensor: {:?}, GasType: {:?}", &adc_value, sensor_type, gas_type);
-        ::commands::sensor_new_adc_at(&gas_type, &sensor_type, &kombisensor, adc_value);
+        let _ = ::commands::sensor_new_adc_at(&gas_type, &sensor_type, &kombisensor, adc_value);
     }));
 
     // Weg zurück

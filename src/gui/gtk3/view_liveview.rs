@@ -1,10 +1,11 @@
 use gtk;
 use gtk::prelude::*;
 use std::sync::{Arc, Mutex};
-use std::borrow::Borrow;
 use co_no2_kombisensor::kombisensor::{Kombisensor};
 
 
+#[allow(unused_assignments)]
+#[allow(unused_variables)]
 pub fn launch(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
     let stack_main: gtk::Stack = builder.get_object("stack_main").unwrap();
     let box_liveview: gtk::Box = builder.get_object("box_liveview").unwrap();
