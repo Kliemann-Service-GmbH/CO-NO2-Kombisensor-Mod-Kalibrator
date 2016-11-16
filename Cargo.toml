@@ -9,6 +9,11 @@ repository = "https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod-Ka
 license = "GPL-2.0"
 build = "build.rs"
 
+[[bin]]
+name = "kalibrator"
+path = "src/main.rs"
+doc = false
+
 [dependencies]
 byteorder = "*"
 libc = "*"

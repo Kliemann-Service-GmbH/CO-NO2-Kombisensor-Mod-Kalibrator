@@ -70,6 +70,7 @@ impl Kombisensor {
             self.sensors[0].set_adc_at_messgas(modbus_registers[15]);
             self.sensors[0].set_concentration_at_nullgas(modbus_registers[16]);
             self.sensors[0].set_concentration_at_messgas(modbus_registers[17]);
+            self.sensors[0].set_config(modbus_registers[18]);
         }
 
         if sensor2_enabled == 0 {
@@ -81,6 +82,7 @@ impl Kombisensor {
             self.sensors[1].set_adc_at_messgas(modbus_registers[25]);
             self.sensors[1].set_concentration_at_nullgas(modbus_registers[26]);
             self.sensors[1].set_concentration_at_messgas(modbus_registers[27]);
+            self.sensors[1].set_config(modbus_registers[28]);
         }
     }
 

@@ -26,6 +26,7 @@ pub struct Sensor {
     concentration_at_messgas: u16,
     sensor_type: SensorType, // Nicht direkt in der Kombisensor Firmware (coil 0 für Sensor1 und 16 für Sensor2)
     si: SI, // Nicht direkt in der Kombisensor Firmware/ Modbus Datenstruktur (coils 1..3 für Sensor1 usw.)
+    config: u16,
 }
 
 impl Sensor {
@@ -41,6 +42,7 @@ impl Sensor {
             concentration_at_messgas: 0,
             sensor_type: sensor_type,
             si: SI::ppm,
+            config: 0,
         }
     }
 
@@ -76,6 +78,10 @@ impl Sensor {
     pub fn set_concentration_at_messgas(&mut self, concentration_at_messgas: u16) {
         self.concentration_at_messgas = concentration_at_messgas;
     }
+
+    pub fn set_config(&mut self, config: u16) {
+        self.config = config;
+    }
 // GETTER
     pub fn get_number(&self) -> u16 {
         self.number
@@ -108,11 +114,25 @@ impl Sensor {
     pub fn get_concentration_at_messgas(&self) -> u16 {
         self.concentration_at_messgas
     }
+
+    pub fn get_config(&self) -> u16 {
+        self.config
+    }
 /// MISC
     pub fn get_mv(&self) -> u16 {
         (5000 / 1024) * self.adc_value as u16
     }
 
+    /// Berechnet die Gaskonzentration mit einer linearen Funktion
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use kalibrator::{Sensor, SensorType};
+    ///
+    /// let sensor = Sensor::new(SensorType::RaGasNO2);
+    /// assert_eq!(sensor.get_concentration(), 0.0);
+    /// ```
     pub fn get_concentration(&self) -> f64 {
         let adc_value = self.adc_value;
         let adc_at_nullgas = self.adc_at_nullgas;
@@ -127,6 +147,23 @@ impl Sensor {
 
         // Ist die Konzentration kleiner Null, wird Null ausgegeben, ansonnsten die berechnete Konzentration
         if concentration < 0.0 { 0.0 } else { concentration }
+    }
+
+    /// Liefert true oder false je nachdem ob der Sensor aktiv Ist
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use kalibrator::{Sensor, SensorType};
+    ///
+    /// let sensor = Sensor::new(SensorType::RaGasNO2);
+    /// assert_eq!(sensor.is_enabled(), false);
+    /// ```
+    pub fn is_enabled(&self) -> bool {
+        match (self.config >> 1) & 1 {
+            1 => true,
+            _ => false,
+        }
     }
 
 }
