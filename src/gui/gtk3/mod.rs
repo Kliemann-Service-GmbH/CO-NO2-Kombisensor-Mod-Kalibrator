@@ -31,6 +31,7 @@ fn update_widgets(builder: &gtk::Builder) {
     let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
+    let button_show_values: gtk::Button = builder.get_object("button_show_values").unwrap();
     let label_co: gtk::Label = builder.get_object("label_co").unwrap();
     let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
     let label_kalibrator_version: gtk::Label = builder.get_object("label_kalibrator_version").unwrap();
@@ -44,6 +45,7 @@ fn update_widgets(builder: &gtk::Builder) {
     button_enable_co.set_sensitive(false);
     button_enable_no2.set_sensitive(false);
     button_live_view.set_sensitive(false);
+    button_show_values.set_sensitive(false);
     button_save_modbus_address.set_sensitive(false);
     label_co.set_sensitive(false);
     label_no2.set_sensitive(false);
@@ -57,6 +59,7 @@ fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mute
     let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
     let button_live_view: gtk::Button = builder.get_object("button_live_view").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
+    let button_show_values: gtk::Button = builder.get_object("button_show_values").unwrap();
     let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
     let label_info_bar_message: gtk::Label = builder.get_object("label_info_bar_message").unwrap();
     let label_kombisensor_version: gtk::Label = builder.get_object("label_kombisensor_version").unwrap();
@@ -95,6 +98,7 @@ fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mute
             button_save_modbus_address.set_sensitive(false);
             button_save_modbus_address.set_sensitive(true);
             button_live_view.set_sensitive(true);
+            button_show_values.set_sensitive(true);
             label_co.set_sensitive(true);
             label_no2.set_sensitive(true);
             info_bar.hide();
@@ -116,6 +120,7 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
     let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
     let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
+    let button_show_values: gtk::Button = builder.get_object("button_show_values").unwrap();
     let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
     let label_co: gtk::Label = builder.get_object("label_co").unwrap();
     let label_info_bar_message: gtk::Label = builder.get_object("label_info_bar_message").unwrap();
@@ -145,6 +150,7 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
                     button_enable_no2.set_sensitive(true);
                     button_save_modbus_address.set_sensitive(false);
                     button_save_modbus_address.set_sensitive(true);
+                    button_show_values.set_sensitive(true);
                     label_co.set_sensitive(true);
                     label_no2.set_sensitive(true);
 
@@ -162,6 +168,37 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
             info_bar.show();
         }
     }
+}
+
+// Aktion für den Reset Knopf
+fn callback_button_reset(builder: &gtk::Builder) {
+    let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
+    let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
+    let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
+    let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
+    let button_live_view: gtk::Button = builder.get_object("button_live_view").unwrap();
+    let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
+    let button_show_values: gtk::Button = builder.get_object("button_show_values").unwrap();
+    let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
+    let label_co: gtk::Label = builder.get_object("label_co").unwrap();
+    let label_info_bar_message: gtk::Label = builder.get_object("label_info_bar_message").unwrap();
+    let label_kombisensor_version: gtk::Label = builder.get_object("label_kombisensor_version").unwrap();
+    let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
+    let adjustment_modbus_address: gtk::Adjustment = builder.get_object("adjustment_modbus_address").unwrap();
+
+    button_calib_co.set_sensitive(false);
+    button_calib_no2.set_sensitive(false);
+    button_enable_co.set_sensitive(false);
+    button_enable_no2.set_sensitive(false);
+    button_save_modbus_address.set_sensitive(true);
+    button_live_view.set_sensitive(false);
+    button_show_values.set_sensitive(false);
+    label_co.set_sensitive(false);
+    label_no2.set_sensitive(false);
+
+    adjustment_modbus_address.set_value(247.0);
+    
+    info_bar.hide();
 }
 
 // Gemeinsamer Callback
@@ -280,14 +317,15 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     let window: gtk::Window = builder.get_object("main_window").unwrap();
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
-    let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
+    let button_discover: gtk::Button = builder.get_object("button_discover").unwrap();
     let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
     let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
     let button_live_view: gtk::Button = builder.get_object("button_live_view").unwrap();
-    let button_discover: gtk::Button = builder.get_object("button_discover").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let button_sensor_connect: gtk::Button = builder.get_object("button_sensor_connect").unwrap();
     let button_show_values: gtk::Button = builder.get_object("button_show_values").unwrap();
+    let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
+    let button_reset: gtk::Button = builder.get_object("button_reset").unwrap();
 
     update_widgets(&builder);
 
@@ -305,6 +343,10 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
 
     button_show_values.connect_clicked(clone!(builder, kombisensor => move |_| {
         view_show_values::launch(&builder, &kombisensor);
+    }));
+
+    button_reset.connect_clicked(clone!(builder => move |_| {
+        callback_button_reset(&builder);
     }));
 
     button_sensor_connect.connect_clicked(clone!(builder, kombisensor => move |_| {
