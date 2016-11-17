@@ -69,6 +69,8 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
     <property name="default_height">600</property>
     <child>
       <object class="GtkBox">
+        <property name="width_request">800</property>
+        <property name="height_request">400</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
@@ -387,8 +389,8 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     </child>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">False</property>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
                     <property name="position">4</property>
                   </packing>
                 </child>
@@ -437,8 +439,8 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     </child>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">False</property>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
                     <property name="position">5</property>
                   </packing>
                 </child>
@@ -487,8 +489,8 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     </child>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">False</property>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
                     <property name="position">6</property>
                   </packing>
                 </child>
@@ -514,6 +516,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
+                    <property name="pack_type">end</property>
                     <property name="position">7</property>
                   </packing>
                 </child>
