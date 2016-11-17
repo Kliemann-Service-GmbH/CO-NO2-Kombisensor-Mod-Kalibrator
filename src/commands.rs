@@ -40,7 +40,7 @@ pub fn sensor_new_adc_at(gas_type: &GasType, sensor_type: &SensorType, kombisens
 /// Speichert eine neue Modbus Adresse im Kombisensor
 ///
 pub fn kombisensor_new_modbus_address(kombisensor: &Arc<Mutex<Kombisensor>>, new_modbus_address: i32) -> Result<()> {
-    let kombisensor = kombisensor.lock().unwrap();
+    let mut kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
     let register_address: i32 = 3; // Im Modbus Register[3] ist die Modbus Adresse gespeichert.
 
@@ -50,6 +50,9 @@ pub fn kombisensor_new_modbus_address(kombisensor: &Arc<Mutex<Kombisensor>>, new
     try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
     try!(modbus.connect());
     try!(modbus.write_register(register_address, new_modbus_address));
+
+    // Aktualisiere die Kombisensor Instanc im RAM
+    kombisensor.set_modbus_address(new_modbus_address as u8);
 
     Ok(())
 }
