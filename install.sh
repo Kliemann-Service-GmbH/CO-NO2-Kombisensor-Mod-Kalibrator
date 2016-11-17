@@ -22,7 +22,7 @@ cat <<EOF | tee /etc/systemd/system/kalibrator.service
 [Unit]
 Description="Kalibrator Software für die CO/NO2 Kombisensoren mit Modbus Interface"
 After=weston.service
-After=dev-input-input3.device
+#After=dev-input-input3.device # Scheinbar doch nicht nötig
 
 [Service]
 Environment="XDG_RUNTIME_DIR=/run/user/root"

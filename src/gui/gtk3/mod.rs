@@ -46,7 +46,7 @@ fn update_widgets(builder: &gtk::Builder) {
     button_enable_no2.set_sensitive(false);
     button_live_view.set_sensitive(false);
     button_show_values.set_sensitive(false);
-    button_save_modbus_address.set_sensitive(false);
+    button_save_modbus_address.set_sensitive(true);
     label_co.set_sensitive(false);
     label_no2.set_sensitive(false);
 }
@@ -197,7 +197,7 @@ fn callback_button_reset(builder: &gtk::Builder) {
     label_no2.set_sensitive(false);
 
     adjustment_modbus_address.set_value(247.0);
-    
+
     info_bar.hide();
 }
 
@@ -283,7 +283,15 @@ fn window_setup(window: &gtk::Window) {
 
     match ::std::env::var("XMZ_HARDWARE") {
         Ok(_) => {
-            window.fullscreen();
+            // Fullscreen geht unter Weston nicht richtig wenn die Fenstergrösse nicht 100% unter unserer Konstrolle sind.
+            // Die Anwenung ist dann im Fehlerfall einfach nicht sichtbar, aber gestartet.
+            //window.fullscreen();
+
+            // Alternative wird halt ein richtiges Fenster maximiert. Wichtig ist hier das es nicht
+            // schliessbar und verschiebbar ist...
+            window.maximize();
+            window.set_deletable(false);
+            window.set_resizable(false);
         }
         Err(_) => {}
     }
