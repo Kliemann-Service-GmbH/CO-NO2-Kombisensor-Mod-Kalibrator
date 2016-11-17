@@ -32,6 +32,9 @@ fn update_widgets(builder: &gtk::Builder) {
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
     let label_co: gtk::Label = builder.get_object("label_co").unwrap();
     let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
+    let label_kalibrator_version: gtk::Label = builder.get_object("label_kalibrator_version").unwrap();
+
+    label_kalibrator_version.set_text(env!("CARGO_PKG_VERSION"));
 
     // Bei Programstart werden alle Button und Label erstmal auf nicht sensitive gestellt.
     // Erst wenn eine Modbus Adresse gefunden wurde, discovery, werden die jeweiligen Widgets aktiv.
@@ -55,8 +58,8 @@ fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mute
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
     let label_info_bar_message: gtk::Label = builder.get_object("label_info_bar_message").unwrap();
-    let label_co: gtk::Label = builder.get_object("label_co").unwrap();
     let label_kombisensor_version: gtk::Label = builder.get_object("label_kombisensor_version").unwrap();
+    let label_co: gtk::Label = builder.get_object("label_co").unwrap();
     let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
     let spin_button_modbus_address: gtk::SpinButton = builder.get_object("spin_button_modbus_address").unwrap();
     let adjustment_modbus_address: gtk::Adjustment = builder.get_object("adjustment_modbus_address").unwrap();
