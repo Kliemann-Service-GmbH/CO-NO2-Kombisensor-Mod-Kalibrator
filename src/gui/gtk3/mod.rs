@@ -90,6 +90,7 @@ fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mute
             button_enable_no2.set_sensitive(true);
             button_save_modbus_address.set_sensitive(false);
             button_save_modbus_address.set_sensitive(true);
+            button_live_view.set_sensitive(true);
             label_co.set_sensitive(true);
             label_no2.set_sensitive(true);
             info_bar.hide();
@@ -97,8 +98,6 @@ fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mute
             spin_button_modbus_address.set_value(kombisensor.lock().unwrap().get_modbus_address() as f64);
         }
     }
-
-    button_live_view.set_sensitive(true);
 }
 
 // Callback Live Ansicht der Sensor Messzellen
@@ -148,7 +147,10 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
                     spin_button_modbus_address.set_value(kombisensor.lock().unwrap().get_modbus_address() as f64);
                     println!("Erkannter Sensor:\n{:#?}\n", kombisensor);
                 }
-                Err(_) => {}
+                Err(err) => {
+                    label_info_bar_message.set_text(err.description());
+                    info_bar.show();
+                }
             };
         }
         Err(err) => {
