@@ -77,6 +77,13 @@ fn update_widgets(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>,
     }));
 }
 
+/// Funktion die den aktuell auf der Hardware gepeicherten ADC Wert in das entsprechende Widget schreibt
+fn fill_current_adc_value(gas_type: &GasType, sensor_type: &SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
+    let label_messpunkt_current_adc_value: gtk::Label = builder.get_object("label_messpunkt_current_adc_value").unwrap();
+
+    label_messpunkt_current_adc_value.set_text("9999");
+}
+
 pub fn launch(gas_type: GasType, sensor_type: &SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
     let box_calibrator_view: gtk::Box = builder.get_object("box_calibrator_view").unwrap();
     let box_messpunkt_view: gtk::Box = builder.get_object("box_messpunkt_view").unwrap();

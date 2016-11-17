@@ -975,6 +975,9 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">ADC</property>
+                        <attributes>
+                          <attribute name="weight" value="heavy"/>
+                        </attributes>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -1034,6 +1037,42 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkBox" id="box_messpunkt_current_adc">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkLabel" id="label_messpunkt_current_adc">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Im Moment auf der Hardware gepeicherter Wert:</property>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_messpunkt_current_adc_value">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="label" translatable="yes">0000</property>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkBox" id="box_messpunkt_adc_value">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -1042,6 +1081,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                       <object class="GtkLabel" id="label_messpunkt_adc">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">end</property>
                         <property name="label" translatable="yes">0000</property>
                       </object>
                       <packing>
@@ -1066,18 +1106,19 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="box_messpunkt_mV">
+                  <object class="GtkBox" id="box_messpunkt_mv">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="homogeneous">True</property>
                     <child>
-                      <object class="GtkLabel" id="label_messpunkt_mV">
+                      <object class="GtkLabel" id="label_messpunkt_mv">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">end</property>
                         <property name="label" translatable="yes">0000</property>
                       </object>
                       <packing>
@@ -1087,7 +1128,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="label_messpunkt_mV_label">
+                      <object class="GtkLabel" id="label_messpunkt_mv_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">mV</property>
@@ -1102,7 +1143,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="position">3</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
                 <child>
@@ -1115,7 +1156,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">4</property>
+                    <property name="position">5</property>
                   </packing>
                 </child>
               </object>
