@@ -22,6 +22,7 @@ cat <<EOF | tee /etc/systemd/system/kalibrator.service
 [Unit]
 Description="Kalibrator Software für die CO/NO2 Kombisensoren mit Modbus Interface"
 After=weston.service
+After=dev-input-input3.device
 
 [Service]
 Environment="XDG_RUNTIME_DIR=/run/user/root"
@@ -37,6 +38,7 @@ WantedBy=graphical.target
 EOF
 
 # Unit aktivieren ...
+# systemctl daemon-reload # wenn das Unit File geändert wurde
 systemctl enable kalibrator.service
 
 # Unit starten
