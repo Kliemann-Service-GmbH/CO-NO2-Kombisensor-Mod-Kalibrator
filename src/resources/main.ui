@@ -30,7 +30,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
   <!-- interface-authors \"Stefan M\303\274ller <s.mueller@it.kls-glt.de>\" -->
   <object class="GtkAdjustment" id="adjustment_modbus_address">
     <property name="lower">1</property>
-    <property name="upper">256</property>
+    <property name="upper">247</property>
     <property name="value">1</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
@@ -280,9 +280,6 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <placeholder/>
-                        </child>
-                        <child>
                           <object class="GtkButton" id="button_values">
                             <property name="label" translatable="yes">ausgelesene Kombisensor Daten anzeigen</property>
                             <property name="visible">True</property>
@@ -293,6 +290,23 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="button_reset">
+                            <property name="label">gtk-refresh</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="use_stock">True</property>
+                            <property name="image_position">top</property>
+                            <property name="always_show_image">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="pack_type">end</property>
                             <property name="position">2</property>
                           </packing>
                         </child>
@@ -346,6 +360,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                       <object class="GtkScale" id="scale_modbus_address">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="margin_right">30</property>
                         <property name="adjustment">adjustment_modbus_address</property>
                         <property name="round_digits">0</property>
                         <property name="digits">0</property>

@@ -22,6 +22,29 @@ mod view_messpunkt;
 mod view_liveview;
 
 
+/// Initialisiere alle Widgets die das Programm nutzt aus dem Glade File.
+fn update_widgets(builder: &gtk::Builder) {
+    let button_live_view: gtk::Button = builder.get_object("button_live_view").unwrap();
+    let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
+    let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
+    let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
+    let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
+    let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
+    let label_co: gtk::Label = builder.get_object("label_co").unwrap();
+    let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
+
+    // Bei Programstart werden alle Button und Label erstmal auf nicht sensitive gestellt.
+    // Erst wenn eine Modbus Adresse gefunden wurde, discovery, werden die jeweiligen Widgets aktiv.
+    button_calib_co.set_sensitive(false);
+    button_calib_no2.set_sensitive(false);
+    button_enable_co.set_sensitive(false);
+    button_enable_no2.set_sensitive(false);
+    button_live_view.set_sensitive(false);
+    button_save_modbus_address.set_sensitive(false);
+    label_co.set_sensitive(false);
+    label_no2.set_sensitive(false);
+}
+
 // Callback "Sensor auslesen"
 fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
@@ -245,31 +268,21 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     // Widgets der GUI gefüllt.
     let kombisensor = Arc::new(Mutex::new(Kombisensor::new()));
 
-    // Initialisiere alle Widgets die das Programm nutzt aus dem Glade File.
     let builder = gtk::Builder::new_from_resource("/com/gaswarnanlagen/xmz-mod-touch/GUI/main.ui");
-    let button_live_view: gtk::Button = builder.get_object("button_live_view").unwrap();
+
+    // Widget Instancen
+    let window: gtk::Window = builder.get_object("main_window").unwrap();
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
-    let button_discover: gtk::Button = builder.get_object("button_discover").unwrap();
-    let button_sensor_connect: gtk::Button = builder.get_object("button_sensor_connect").unwrap();
+    let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
     let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
     let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
+    let button_live_view: gtk::Button = builder.get_object("button_live_view").unwrap();
+    let button_discover: gtk::Button = builder.get_object("button_discover").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
-    let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
-    let label_co: gtk::Label = builder.get_object("label_co").unwrap();
-    let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
-    let window: gtk::Window = builder.get_object("main_window").unwrap();
+    let button_sensor_connect: gtk::Button = builder.get_object("button_sensor_connect").unwrap();
 
-    // Bei Programstart werden alle Button und Label erstmal auf nicht sensitive gestellt.
-    // Erst wenn eine Modbus Adresse gefunden wurde, discovery, werden die jeweiligen Widgets aktiv.
-    button_calib_co.set_sensitive(false);
-    button_calib_no2.set_sensitive(false);
-    button_enable_co.set_sensitive(false);
-    button_enable_no2.set_sensitive(false);
-    button_live_view.set_sensitive(false);
-    button_save_modbus_address.set_sensitive(false);
-    label_co.set_sensitive(false);
-    label_no2.set_sensitive(false);
+    update_widgets(&builder);
 
     // Rufe Funktion für die Basis Fenster Konfiguration auf
     window_setup(&window);
@@ -277,6 +290,7 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     window.show_all();
 
     info_bar.hide();
+
     // Close callback
     info_bar.connect_response(move |info_bar, _| {
         info_bar.hide();
