@@ -20,6 +20,7 @@ mod view_calibrator;
 mod static_resource;
 mod view_messpunkt;
 mod view_liveview;
+mod view_show_values;
 
 
 /// Initialisiere alle Widgets die das Programm nutzt aus dem Glade File.
@@ -286,6 +287,7 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     let button_discover: gtk::Button = builder.get_object("button_discover").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let button_sensor_connect: gtk::Button = builder.get_object("button_sensor_connect").unwrap();
+    let button_show_values: gtk::Button = builder.get_object("button_show_values").unwrap();
 
     update_widgets(&builder);
 
@@ -300,6 +302,10 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     info_bar.connect_response(move |info_bar, _| {
         info_bar.hide();
     });
+
+    button_show_values.connect_clicked(clone!(builder, kombisensor => move |_| {
+        view_show_values::launch(&builder, &kombisensor);
+    }));
 
     button_sensor_connect.connect_clicked(clone!(builder, kombisensor => move |_| {
         callback_button_sensor_connect(&builder, &kombisensor);

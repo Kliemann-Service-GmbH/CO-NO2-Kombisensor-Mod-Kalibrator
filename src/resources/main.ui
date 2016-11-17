@@ -280,7 +280,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="button_values">
+                          <object class="GtkButton" id="button_show_values">
                             <property name="label" translatable="yes">ausgelesene Kombisensor Daten anzeigen</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -1488,7 +1488,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
               </packing>
             </child>
             <child>
-              <object class="GtkBox" id="box_values">
+              <object class="GtkBox" id="box_show_values">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
@@ -1512,7 +1512,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="label_values_cancel">
+                      <object class="GtkButton" id="button_show_values_cancel">
                         <property name="label">gtk-go-back</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -1560,7 +1560,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                         <property name="can_focus">False</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkLabel" id="label_values_version_major">
+                          <object class="GtkLabel" id="label_show_values_version_major">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Version Nummer Major</property>
@@ -1572,7 +1572,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_version_minor">
+                          <object class="GtkLabel" id="label_show_values_version_minor">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Version Nummer Minor</property>
@@ -1584,7 +1584,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_version_patch">
+                          <object class="GtkLabel" id="label_show_values_version_patch">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Version Nummer Patch</property>
@@ -1596,7 +1596,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_modbus_address">
+                          <object class="GtkLabel" id="label_show_values_modbus_address">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Modbus Adresse</property>
@@ -1620,7 +1620,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                         <property name="can_focus">False</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkLabel" id="label_values_version_major_value">
+                          <object class="GtkLabel" id="label_show_values_version_major_value">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1631,7 +1631,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_version_minor_value">
+                          <object class="GtkLabel" id="label_show_values_version_minor_value">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1642,7 +1642,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_version_patch_value">
+                          <object class="GtkLabel" id="label_show_values_version_patch_value">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1653,7 +1653,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_modbus_address_value">
+                          <object class="GtkLabel" id="label_show_values_modbus_address_value">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1713,7 +1713,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor_num">
+                          <object class="GtkLabel" id="label_show_values_sensor_num">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Nummer, wird intern zur Identifikation genutzt</property>
@@ -1725,7 +1725,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor_min">
+                          <object class="GtkLabel" id="label_show_values_sensor_min">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Minimum Sensor Messbereich</property>
@@ -1737,7 +1737,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor_max">
+                          <object class="GtkLabel" id="label_show_values_sensor_max">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Maximum Sensor Messbereich</property>
@@ -1749,7 +1749,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor_calib_nullgas">
+                          <object class="GtkLabel" id="label_show_values_sensor_calib_nullgas">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">ADC Wert bei Nullgas, Kalibrationsdaten</property>
@@ -1761,7 +1761,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor_calib_messgas">
+                          <object class="GtkLabel" id="label_show_values_sensor_calib_messgas">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">ADC Wert bei Messgas, Kalibrationsdaten</property>
@@ -1773,7 +1773,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor_conz_nullgas">
+                          <object class="GtkLabel" id="label_show_values_sensor_conz_nullgas">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Konzentration Nullgas</property>
@@ -1785,7 +1785,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor_conz_messgas">
+                          <object class="GtkLabel" id="label_show_values_sensor_conz_messgas">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Konzentration Messgas</property>
@@ -1797,7 +1797,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor_config">
+                          <object class="GtkLabel" id="label_show_values_sensor_config">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Konfigurationsdaten, 16Bit COILS des Sensors</property>
@@ -1836,7 +1836,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor1_num">
+                          <object class="GtkLabel" id="label_show_values_sensor_num_sensor1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1847,7 +1847,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor1_min">
+                          <object class="GtkLabel" id="label_show_values_sensor_min_sensor1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1858,7 +1858,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor1_max">
+                          <object class="GtkLabel" id="label_show_values_sensor_max_sensor1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1869,7 +1869,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor1_calib_nullgas">
+                          <object class="GtkLabel" id="label_show_values_sensor_calib_nullgas_sensor1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1880,7 +1880,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor1_calib_messgas">
+                          <object class="GtkLabel" id="label_show_values_sensor_calib_messgas_sensor1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1891,7 +1891,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor1_conz_nullgas">
+                          <object class="GtkLabel" id="label_show_values_sensor_conz_nullgas_sensor1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1902,7 +1902,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor1_conz_messgas">
+                          <object class="GtkLabel" id="label_show_values_sensor_conz_messgas_sensor1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1913,7 +1913,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor1_config">
+                          <object class="GtkLabel" id="label_show_values_sensor_config_sensor1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1951,7 +1951,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor2_num">
+                          <object class="GtkLabel" id="label_show_values_sensor_num_sensor2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1962,7 +1962,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor2_min">
+                          <object class="GtkLabel" id="label_show_values_sensor_min_sensor2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1973,7 +1973,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor2_max">
+                          <object class="GtkLabel" id="label_show_values_sensor_max_sensor2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1984,7 +1984,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor2_calib_nullgas">
+                          <object class="GtkLabel" id="label_show_values_sensor_calib_nullgas_sensor2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1995,7 +1995,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor2_calib_messgas">
+                          <object class="GtkLabel" id="label_show_values_sensor_calib_messgas_sensor2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -2006,7 +2006,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor2_conz_nullgas">
+                          <object class="GtkLabel" id="label_show_values_sensor_conz_nullgas_sensor2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -2017,7 +2017,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor2_conz_messgas">
+                          <object class="GtkLabel" id="label_show_values_sensor_conz_messgas_sensor2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -2028,7 +2028,7 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_values_sensor2_config">
+                          <object class="GtkLabel" id="label_show_values_sensor_config_sensor2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
