@@ -931,13 +931,37 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     <property name="homogeneous">True</property>
                     <property name="layout_style">expand</property>
                     <child>
-                      <object class="GtkLabel" id="label_messpunkt_sensor_type">
+                      <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">&lt;Platzhalter hier erscheint der Sensor Type&gt;</property>
+                        <child>
+                          <object class="GtkLabel" id="label_messpunkt_sensor_type">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">&lt;Platzhalter hier erscheint der Sensor Type&gt;</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label_messpunkt_gas_type">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">&lt;Platzhalter hier erscheint der Gas Type&gt;</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="pack_type">end</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
+                        <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">0</property>
                       </packing>

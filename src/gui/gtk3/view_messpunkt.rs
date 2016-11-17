@@ -35,11 +35,59 @@ fn get_adc_value(sensor_type: &SensorType, builder: &gtk::Builder, kombisensor: 
 }
 
 #[allow(unused_assignments)]
-fn update_widgets(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>, sensor_num: usize) {
-    gtk::timeout_add(100, clone!(kombisensor, builder => move || {
+fn update_widgets(sensor_type: SensorType, gas_type: GasType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
+    // 100ms Sekunden Timer
+    gtk::timeout_add(100, clone!(builder, kombisensor, sensor_type => move || {
         let label_messpunkt_sensor_type: gtk::Label = builder.get_object("label_messpunkt_sensor_type").unwrap();
+        let label_messpunkt_gas_type: gtk::Label = builder.get_object("label_messpunkt_gas_type").unwrap();
         let label_messpunkt_adc: gtk::Label = builder.get_object("label_messpunkt_adc").unwrap();
         let label_messpunkt_mv: gtk::Label = builder.get_object("label_messpunkt_mv").unwrap();
+        let label_messpunkt_current_adc_value: gtk::Label = builder.get_object("label_messpunkt_current_adc_value").unwrap();
+
+        let mut sensor_num: usize = 0;
+
+        let mut current_adc_value = String::new(); // Wenn der Text dem Widget im Match Arm zugewiesen wird freezed die App
+        match sensor_type {
+            SensorType::RaGasNO2 => {
+                sensor_num = 0;
+                label_messpunkt_sensor_type.set_text("NO2 Messzelle");
+
+                match gas_type {
+                    GasType::Nullgas => {
+                        label_messpunkt_gas_type.set_text("Nullgas");
+                        let kombisensor = kombisensor.lock().unwrap();
+                        let current_adc_value = kombisensor.sensors[0].get_adc_at_nullgas().to_string();
+                        label_messpunkt_current_adc_value.set_text(&current_adc_value);
+                    }
+                    GasType::Messgas => {
+                        label_messpunkt_gas_type.set_text("Messgas");
+                        let kombisensor = kombisensor.lock().unwrap();
+                        let current_adc_value = kombisensor.sensors[0].get_adc_at_messgas().to_string();
+                        label_messpunkt_current_adc_value.set_text(&current_adc_value);
+                    }
+                }
+            }
+            SensorType::RaGasCO => {
+                sensor_num = 1;
+                label_messpunkt_sensor_type.set_text("CO Messzelle");
+
+                match gas_type {
+                    GasType::Nullgas => {
+                        label_messpunkt_gas_type.set_text("Nullgas");
+                        let kombisensor = kombisensor.lock().unwrap();
+                        let current_adc_value = kombisensor.sensors[1].get_adc_at_nullgas().to_string();
+                        label_messpunkt_current_adc_value.set_text(&current_adc_value);
+                    }
+                    GasType::Messgas => {
+                        label_messpunkt_gas_type.set_text("Messgas");
+                        let kombisensor = kombisensor.lock().unwrap();
+                        let current_adc_value = kombisensor.sensors[1].get_adc_at_messgas().to_string();
+                        label_messpunkt_current_adc_value.set_text(&current_adc_value);
+                    }
+                }
+            }
+        }
+
 
         // Wurde der Checkbutton getrueckt dann gibts kein linve update.
         // Dadurch das der CheckButton das Live Update beendet, wird auch dieser Thread beendet, siehe weiter unten.
@@ -56,7 +104,6 @@ fn update_widgets(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>,
             adjustment_sensor_adc_value_at.set_value(adc_value);
         }
 
-        label_messpunkt_sensor_type.set_text("NO2 Messzelle");
 
         let mut adc_value = String::new();
         let mut mv_value = String::new();
@@ -77,13 +124,6 @@ fn update_widgets(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>,
     }));
 }
 
-/// Funktion die den aktuell auf der Hardware gepeicherten ADC Wert in das entsprechende Widget schreibt
-fn fill_current_adc_value(gas_type: &GasType, sensor_type: &SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
-    let label_messpunkt_current_adc_value: gtk::Label = builder.get_object("label_messpunkt_current_adc_value").unwrap();
-
-    label_messpunkt_current_adc_value.set_text("9999");
-}
-
 pub fn launch(gas_type: GasType, sensor_type: &SensorType, builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
     let box_calibrator_view: gtk::Box = builder.get_object("box_calibrator_view").unwrap();
     let box_messpunkt_view: gtk::Box = builder.get_object("box_messpunkt_view").unwrap();
@@ -102,10 +142,24 @@ pub fn launch(gas_type: GasType, sensor_type: &SensorType, builder: &gtk::Builde
 
     match *sensor_type {
         SensorType::RaGasNO2 => {
-            update_widgets(&builder, &kombisensor, 0);
+            match gas_type {
+                GasType::Nullgas => {
+                    update_widgets(SensorType::RaGasNO2, GasType::Nullgas, &builder, &kombisensor);
+                }
+                GasType::Messgas => {
+                    update_widgets(SensorType::RaGasNO2, GasType::Messgas, &builder, &kombisensor);
+                }
+            }
         }
         SensorType::RaGasCO => {
-            update_widgets(&builder, &kombisensor, 1);
+            match gas_type {
+                GasType::Nullgas => {
+                    update_widgets(SensorType::RaGasCO, GasType::Nullgas, &builder, &kombisensor);
+                }
+                GasType::Messgas => {
+                    update_widgets(SensorType::RaGasCO, GasType::Messgas, &builder, &kombisensor);
+                }
+            }
         }
     }
 
