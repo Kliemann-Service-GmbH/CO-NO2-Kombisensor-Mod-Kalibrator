@@ -11,6 +11,8 @@ set -o errexit -o nounset
 
 # Stop laufende Instanz
 systemctl stop kalibrator.service
+# bereinige cargo
+cargo clean
 # Bilde neues Release
 cargo build --release
 # Kopiere neu erstellte Binaries und Assets in das Dateisystem
