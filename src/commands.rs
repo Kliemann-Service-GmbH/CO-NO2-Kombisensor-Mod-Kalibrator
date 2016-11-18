@@ -161,8 +161,108 @@ pub fn enable_sensor(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_type: SensorT
     try!(modbus.connect());
 
     match sensor_type {
-        SensorType::RaGasNO2 => try!(modbus.write_bit(0x00, sensor_state)),
-        SensorType::RaGasCO =>  try!(modbus.write_bit(0x16, sensor_state)),
+        SensorType::RaGasNO2 => {try!(modbus.write_bit(00, sensor_state))}
+        SensorType::RaGasCO =>  {try!(modbus.write_bit(16, sensor_state))}
+    }
+
+    Ok(())
+}
+
+/// Speichere Min Value des Sensors
+///
+pub fn sensor_save_min(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_type: &SensorType, min_value: i32) -> Result<()> {
+    let mut kombisensor = kombisensor.lock().unwrap();
+    let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
+    try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
+    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
+    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
+    try!(modbus.set_debug(true));
+    try!(modbus.connect());
+
+    match *sensor_type {
+        SensorType::RaGasNO2 => {
+            try!(modbus.write_register(12, min_value));
+            kombisensor.sensors[0].set_min_value(min_value as u16);
+        }
+        SensorType::RaGasCO =>  {
+            try!(modbus.write_register(22, min_value));
+            kombisensor.sensors[1].set_min_value(min_value as u16);
+        }
+    }
+
+    Ok(())
+}
+
+/// Speichere Max Value des Sensors
+///
+pub fn sensor_save_max(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_type: &SensorType, max_value: i32) -> Result<()> {
+    let mut kombisensor = kombisensor.lock().unwrap();
+    let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
+    try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
+    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
+    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
+    try!(modbus.set_debug(true));
+    try!(modbus.connect());
+
+    match *sensor_type {
+        SensorType::RaGasNO2 => {
+            try!(modbus.write_register(13, max_value));
+            kombisensor.sensors[0].set_max_value(max_value as u16);
+        }
+        SensorType::RaGasCO =>  {
+            try!(modbus.write_register(23, max_value));
+            kombisensor.sensors[1].set_max_value(max_value as u16);
+        }
+    }
+
+    Ok(())
+}
+
+/// Speichere Konzentration Nullgas
+///
+pub fn sensor_save_conz_nullgas(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_type: &SensorType, conz_nullgas_value: i32) -> Result<()> {
+    let mut kombisensor = kombisensor.lock().unwrap();
+    let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
+    try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
+    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
+    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
+    try!(modbus.set_debug(true));
+    try!(modbus.connect());
+
+    match *sensor_type {
+        SensorType::RaGasNO2 => {
+            try!(modbus.write_register(14, conz_nullgas_value));
+            kombisensor.sensors[0].set_concentration_at_nullgas(conz_nullgas_value as u16);
+        }
+        SensorType::RaGasCO =>  {
+            try!(modbus.write_register(24, conz_nullgas_value));
+            kombisensor.sensors[1].set_concentration_at_nullgas(conz_nullgas_value as u16);
+        }
+    }
+
+    Ok(())
+}
+
+/// Speichere Konzentration Messgas
+///
+pub fn sensor_save_conz_messgas(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_type: &SensorType, conz_messgas_value: i32) -> Result<()> {
+    let mut kombisensor = kombisensor.lock().unwrap();
+    let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
+    try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
+    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
+    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
+    try!(modbus.set_debug(true));
+    try!(modbus.connect());
+
+    match *sensor_type {
+        SensorType::RaGasNO2 => {
+            try!(modbus.write_register(15, conz_messgas_value));
+            kombisensor.sensors[0].set_concentration_at_messgas(conz_messgas_value as u16);
+        }
+        SensorType::RaGasCO =>  {
+            try!(modbus.write_register(25, conz_messgas_value));
+            kombisensor.sensors[1].set_concentration_at_messgas(conz_messgas_value as u16);
+        }
     }
 
     Ok(())
