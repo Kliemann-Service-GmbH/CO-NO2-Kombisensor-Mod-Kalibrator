@@ -1,4 +1,9 @@
 target
 Cargo.lock
-*.glade~
+*.*~
 *.glade#
+.tags
+*#
+
+
+*.gresource
