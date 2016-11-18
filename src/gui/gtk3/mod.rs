@@ -27,8 +27,8 @@ mod view_show_values;
 fn update_widgets(builder: &gtk::Builder) {
     let button_live_view: gtk::Button = builder.get_object("button_live_view").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
-    let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
-    let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
+    let button_enable_co: gtk::Button = builder.get_object("button_enable_co").unwrap();
+    let button_enable_no2: gtk::Button = builder.get_object("button_enable_no2").unwrap();
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
     let button_show_values: gtk::Button = builder.get_object("button_show_values").unwrap();
@@ -55,8 +55,8 @@ fn update_widgets(builder: &gtk::Builder) {
 fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
-    let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
-    let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
+    let button_enable_co: gtk::Button = builder.get_object("button_enable_co").unwrap();
+    let button_enable_no2: gtk::Button = builder.get_object("button_enable_no2").unwrap();
     let button_live_view: gtk::Button = builder.get_object("button_live_view").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let button_show_values: gtk::Button = builder.get_object("button_show_values").unwrap();
@@ -101,23 +101,28 @@ fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mute
             // Buttons zum aktivieren/ deaktivieren der
             //let kombisensor = &kombisensor.lock().unwrap();
             if kombisensor.lock().unwrap().sensors[0].is_enabled() {
-                button_enable_no2.set_active(false);
                 button_calib_no2.set_sensitive(true);
                 label_no2.set_sensitive(true);
             } else {
-                button_enable_no2.set_active(true);
                 button_calib_no2.set_sensitive(false);
                 label_no2.set_sensitive(false);
             }
             if kombisensor.lock().unwrap().sensors[1].is_enabled() {
-                button_enable_co.set_active(false);
                 button_calib_co.set_sensitive(true);
                 label_co.set_sensitive(true);
             } else {
-                button_enable_co.set_active(true);
                 button_calib_co.set_sensitive(false);
                 label_co.set_sensitive(false);
             }
+
+            button_enable_no2.connect_clicked(clone!(builder, button_enable_no2, kombisensor => move |_| {
+                let _ = callback_button_enable_sensor(&builder, &kombisensor, SensorType::RaGasNO2);
+            }));
+
+            button_enable_co.connect_clicked(clone!(builder, button_enable_co, kombisensor => move |_| {
+                let _ = callback_button_enable_sensor(&builder, &kombisensor, SensorType::RaGasCO);
+            }));
+
 
             info_bar.hide();
 
@@ -135,8 +140,8 @@ fn callback_button_live_view(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kom
 fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>, configuration: &Arc<Mutex<Configuration>>) {
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
-    let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
-    let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
+    let button_enable_co: gtk::Button = builder.get_object("button_enable_co").unwrap();
+    let button_enable_no2: gtk::Button = builder.get_object("button_enable_no2").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let button_show_values: gtk::Button = builder.get_object("button_show_values").unwrap();
     let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
@@ -192,8 +197,8 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
 fn callback_button_reset(builder: &gtk::Builder) {
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
-    let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
-    let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
+    let button_enable_co: gtk::Button = builder.get_object("button_enable_co").unwrap();
+    let button_enable_no2: gtk::Button = builder.get_object("button_enable_no2").unwrap();
     let button_live_view: gtk::Button = builder.get_object("button_live_view").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let button_show_values: gtk::Button = builder.get_object("button_show_values").unwrap();
@@ -220,45 +225,88 @@ fn callback_button_reset(builder: &gtk::Builder) {
 }
 
 // Gemeinsamer Callback
-fn callback_button_enable_sensor(builder: &gtk::Builder, button: &gtk::ToggleButton, kombisensor: &Arc<Mutex<Kombisensor>>, configuration: &Arc<Mutex<Configuration>>) {
-    let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
-    let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
+fn callback_button_enable_sensor(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>, sensor_type: SensorType) {
+    let button_enable_co: gtk::Button = builder.get_object("button_enable_co").unwrap();
+    let button_enable_no2: gtk::Button = builder.get_object("button_enable_no2").unwrap();
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
     let label_co: gtk::Label = builder.get_object("label_co").unwrap();
     let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
     let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
     let label_info_bar_message: gtk::Label = builder.get_object("label_info_bar_message").unwrap();
-    // Get config from Arc<Mutex<>>
-    let configuration = configuration.lock().unwrap();
-    let sensor_status = !button.get_active();
+    //// Get config from Arc<Mutex<>>
+    //let configuration = configuration.lock().unwrap();
+    //
+    //// Checke Serielles Interface
+    //match configuration.is_valid() {
+    //    Ok(_) => {}
+    //    Err(err) => {
+    //        label_info_bar_message.set_text(err.description());
+    //        info_bar.show();
+    //        return;
+    //    }
+    //}
 
-    // Checke Serielles Interface
-    match configuration.is_valid() {
-        Ok(_) => {}
-        Err(err) => {
-            label_info_bar_message.set_text(err.description());
-            info_bar.show();
-            button.set_active(false);
-            return;
-        }
-    }
-
-    if button == &button_enable_no2 {
-        match commands::enable_sensor(&kombisensor, SensorType::RaGasNO2, sensor_status) {
-            Ok(_) => {
-                button_calib_no2.set_sensitive(sensor_status);
-                label_no2.set_sensitive(sensor_status);
+    match sensor_type {
+        SensorType::RaGasNO2 => {
+            println!("NO2");
+            if kombisensor.lock().unwrap().sensors[0].is_enabled() {
+                println!("disable");
+                match commands::enable_sensor(&kombisensor, SensorType::RaGasNO2, false) {
+                    Ok(_) => {
+                        info_bar.hide();
+                        button_calib_no2.set_sensitive(false);
+                        label_no2.set_sensitive(false);
+                    }
+                    Err(err) => {
+                        label_info_bar_message.set_text(err.description());
+                        info_bar.show();
+                    }
+                }
+            } else {
+                println!("enable");
+                match commands::enable_sensor(&kombisensor, SensorType::RaGasNO2, true) {
+                    Ok(_) => {
+                        info_bar.hide();
+                        button_calib_no2.set_sensitive(true);
+                        label_no2.set_sensitive(true);
+                    }
+                    Err(err) => {
+                        label_info_bar_message.set_text(err.description());
+                        info_bar.show();
+                    }
+                }
             }
-            Err(_) => {}
         }
-    } else if button == &button_enable_co {
-        match commands::enable_sensor(&kombisensor, SensorType::RaGasCO, sensor_status) {
-            Ok(_) => {
-                button_calib_co.set_sensitive(sensor_status);
-                label_co.set_sensitive(sensor_status);
+        SensorType::RaGasCO => {
+            println!("CO");
+            if kombisensor.lock().unwrap().sensors[1].is_enabled() {
+                println!("disable");
+                match commands::enable_sensor(&kombisensor, SensorType::RaGasCO, false) {
+                    Ok(_) => {
+                        info_bar.hide();
+                        button_calib_co.set_sensitive(false);
+                        label_co.set_sensitive(false);
+                    }
+                    Err(err) => {
+                        label_info_bar_message.set_text(err.description());
+                        info_bar.show();
+                    }
+                }
+            } else {
+                println!("enable");
+                match commands::enable_sensor(&kombisensor, SensorType::RaGasCO, true) {
+                    Ok(_) => {
+                        info_bar.hide();
+                        button_calib_co.set_sensitive(true);
+                        label_co.set_sensitive(true);
+                    }
+                    Err(err) => {
+                        label_info_bar_message.set_text(err.description());
+                        info_bar.show();
+                    }
+                }
             }
-            Err(_) => {}
         }
     }
 }
@@ -344,8 +392,8 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
     let button_discover: gtk::Button = builder.get_object("button_discover").unwrap();
-    let button_enable_co: gtk::ToggleButton = builder.get_object("button_enable_co").unwrap();
-    let button_enable_no2: gtk::ToggleButton = builder.get_object("button_enable_no2").unwrap();
+    let button_enable_co: gtk::Button = builder.get_object("button_enable_co").unwrap();
+    let button_enable_no2: gtk::Button = builder.get_object("button_enable_no2").unwrap();
     let button_live_view: gtk::Button = builder.get_object("button_live_view").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let button_sensor_connect: gtk::Button = builder.get_object("button_sensor_connect").unwrap();
@@ -391,14 +439,6 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
     // Callback 'button_save_modbus_address' geklickt
     button_save_modbus_address.connect_clicked(clone!(builder, kombisensor => move |_| {
         let _ = callback_button_save_modbus_address(&builder, &kombisensor);
-    }));
-
-    button_enable_no2.connect_clicked(clone!(builder, button_enable_no2, kombisensor, configuration => move |_| {
-        let _ = callback_button_enable_sensor(&builder, &button_enable_no2, &kombisensor, &configuration);
-    }));
-
-    button_enable_co.connect_clicked(clone!(builder, button_enable_co, kombisensor, configuration => move |_| {
-        let _ = callback_button_enable_sensor(&builder, &button_enable_co, &kombisensor, &configuration);
     }));
 
     button_calib_co.connect_clicked(clone!(builder, kombisensor => move |_| {

@@ -411,8 +411,8 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     <property name="can_focus">False</property>
                     <property name="margin_bottom">10</property>
                     <child>
-                      <object class="GtkToggleButton" id="button_enable_no2">
-                        <property name="label" translatable="yes">aktiv</property>
+                      <object class="GtkButton" id="button_enable_no2">
+                        <property name="label" translatable="yes">aktive</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
@@ -462,8 +462,8 @@ Author: "Stefan Müller <s.mueller@it.kls-glt.de>"
                     <property name="can_focus">False</property>
                     <property name="margin_bottom">10</property>
                     <child>
-                      <object class="GtkToggleButton" id="button_enable_co">
-                        <property name="label" translatable="yes">aktiv</property>
+                      <object class="GtkButton" id="button_enable_co">
+                        <property name="label" translatable="yes">aktive</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
