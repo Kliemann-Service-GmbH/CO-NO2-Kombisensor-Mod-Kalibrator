@@ -91,16 +91,34 @@ fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mute
 
             // Widget aktivieren
             // TODO: Funktion Widget Status -> Kombisensor Struct
-            button_calib_co.set_sensitive(true);
-            button_calib_no2.set_sensitive(true);
-            button_enable_co.set_sensitive(true);
-            button_enable_no2.set_sensitive(true);
             button_save_modbus_address.set_sensitive(false);
             button_save_modbus_address.set_sensitive(true);
             button_live_view.set_sensitive(true);
             button_show_values.set_sensitive(true);
-            label_co.set_sensitive(true);
-            label_no2.set_sensitive(true);
+            button_enable_no2.set_sensitive(true);
+            button_enable_co.set_sensitive(true);
+
+            // Buttons zum aktivieren/ deaktivieren der
+            //let kombisensor = &kombisensor.lock().unwrap();
+            if kombisensor.lock().unwrap().sensors[0].is_enabled() {
+                button_enable_no2.set_active(false);
+                button_calib_no2.set_sensitive(true);
+                label_no2.set_sensitive(true);
+            } else {
+                button_enable_no2.set_active(true);
+                button_calib_no2.set_sensitive(false);
+                label_no2.set_sensitive(false);
+            }
+            if kombisensor.lock().unwrap().sensors[1].is_enabled() {
+                button_enable_co.set_active(false);
+                button_calib_co.set_sensitive(true);
+                label_co.set_sensitive(true);
+            } else {
+                button_enable_co.set_active(true);
+                button_calib_co.set_sensitive(false);
+                label_co.set_sensitive(false);
+            }
+
             info_bar.hide();
 
             spin_button_modbus_address.set_value(kombisensor.lock().unwrap().get_modbus_address() as f64);

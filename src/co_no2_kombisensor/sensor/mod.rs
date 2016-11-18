@@ -167,9 +167,9 @@ impl Sensor {
     /// ```
     #[allow(dead_code)]
     pub fn is_enabled(&self) -> bool {
-        match (self.config >> 1) & 1 {
-            1 => true,
-            _ => false,
+        match (self.config >> 0) & 1 {
+            0 => false,
+            _ => true,
         }
     }
 
