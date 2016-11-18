@@ -41,18 +41,19 @@ fn update_widgets(builder: &gtk::Builder) {
     // Bei Programstart werden alle Button und Label erstmal auf nicht sensitive gestellt.
     // Erst wenn eine Modbus Adresse gefunden wurde, discovery, werden die jeweiligen Widgets aktiv.
     button_calib_co.set_sensitive(false);
+    button_save_modbus_address.set_sensitive(false);
     button_calib_no2.set_sensitive(false);
     button_enable_co.set_sensitive(false);
     button_enable_no2.set_sensitive(false);
     button_live_view.set_sensitive(false);
     button_show_values.set_sensitive(false);
-    button_save_modbus_address.set_sensitive(true);
     label_co.set_sensitive(false);
     label_no2.set_sensitive(false);
 }
 
 // Callback "Sensor auslesen"
 fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Kombisensor>>) {
+    let adjustment_modbus_address: gtk::Adjustment = builder.get_object("adjustment_modbus_address").unwrap();
     let button_calib_co: gtk::Button = builder.get_object("button_calib_co").unwrap();
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
     let button_enable_co: gtk::Button = builder.get_object("button_enable_co").unwrap();
@@ -61,12 +62,11 @@ fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mute
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let button_show_values: gtk::Button = builder.get_object("button_show_values").unwrap();
     let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
+    let label_co: gtk::Label = builder.get_object("label_co").unwrap();
     let label_info_bar_message: gtk::Label = builder.get_object("label_info_bar_message").unwrap();
     let label_kombisensor_version: gtk::Label = builder.get_object("label_kombisensor_version").unwrap();
-    let label_co: gtk::Label = builder.get_object("label_co").unwrap();
     let label_no2: gtk::Label = builder.get_object("label_no2").unwrap();
     let spin_button_modbus_address: gtk::SpinButton = builder.get_object("spin_button_modbus_address").unwrap();
-    let adjustment_modbus_address: gtk::Adjustment = builder.get_object("adjustment_modbus_address").unwrap();
 
     // Get modbus Adresse von dem Adjustment
     {
@@ -91,7 +91,6 @@ fn callback_button_sensor_connect(builder: &gtk::Builder, kombisensor: &Arc<Mute
 
             // Widget aktivieren
             // TODO: Funktion Widget Status -> Kombisensor Struct
-            button_save_modbus_address.set_sensitive(false);
             button_save_modbus_address.set_sensitive(true);
             button_live_view.set_sensitive(true);
             button_show_values.set_sensitive(true);
@@ -142,6 +141,7 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
     let button_calib_no2: gtk::Button = builder.get_object("button_calib_no2").unwrap();
     let button_enable_co: gtk::Button = builder.get_object("button_enable_co").unwrap();
     let button_enable_no2: gtk::Button = builder.get_object("button_enable_no2").unwrap();
+    let button_live_view: gtk::Button = builder.get_object("button_live_view").unwrap();
     let button_save_modbus_address: gtk::Button = builder.get_object("button_save_modbus_address").unwrap();
     let button_show_values: gtk::Button = builder.get_object("button_show_values").unwrap();
     let info_bar: gtk::InfoBar = builder.get_object("info_bar").unwrap();
@@ -171,11 +171,11 @@ fn callback_button_discover(builder: &gtk::Builder, kombisensor: &Arc<Mutex<Komb
                     button_calib_no2.set_sensitive(true);
                     button_enable_co.set_sensitive(true);
                     button_enable_no2.set_sensitive(true);
-                    button_save_modbus_address.set_sensitive(false);
                     button_save_modbus_address.set_sensitive(true);
                     button_show_values.set_sensitive(true);
                     label_co.set_sensitive(true);
                     label_no2.set_sensitive(true);
+                    button_live_view.set_sensitive(true);
 
                     spin_button_modbus_address.set_value(kombisensor.lock().unwrap().get_modbus_address() as f64);
                     println!("Erkannter Sensor:\n{:#?}\n", kombisensor);
@@ -213,7 +213,7 @@ fn callback_button_reset(builder: &gtk::Builder) {
     button_calib_no2.set_sensitive(false);
     button_enable_co.set_sensitive(false);
     button_enable_no2.set_sensitive(false);
-    button_save_modbus_address.set_sensitive(true);
+    button_save_modbus_address.set_sensitive(false);
     button_live_view.set_sensitive(false);
     button_show_values.set_sensitive(false);
     label_co.set_sensitive(false);
