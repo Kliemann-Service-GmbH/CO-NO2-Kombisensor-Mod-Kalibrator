@@ -15,7 +15,7 @@ path = "src/main.rs"
 doc = false
 
 [dependencies]
-byteorder = "*"
+#byteorder = "*"
 libc = "*"
 gdk = { git = "https://github.com/gtk-rs/gdk.git" }
 gtk = { git = "https://github.com/gtk-rs/gtk.git", features = ["v3_16"] }
