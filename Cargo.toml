@@ -9,13 +9,16 @@ repository = "https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod-Ka
 license = "GPL-2.0"
 build = "build.rs"
 
+[features]
+# Development Environment, switch off fullscreen and some parts not present on dev maschines
+development = []
+
 [[bin]]
 name = "kalibrator"
 path = "src/main.rs"
 doc = false
 
 [dependencies]
-#byteorder = "*"
 libc = "*"
 gdk = { git = "https://github.com/gtk-rs/gdk.git" }
 gtk = { git = "https://github.com/gtk-rs/gtk.git", features = ["v3_16"] }
