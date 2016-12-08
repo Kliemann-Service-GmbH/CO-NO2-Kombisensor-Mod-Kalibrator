@@ -1,4 +1,3 @@
-#![feature(stmt_expr_attributes)]
 extern crate gdk;
 extern crate gtk;
 extern crate libmodbus_rs;

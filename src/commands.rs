@@ -26,8 +26,6 @@ pub fn sensor_new_adc_at(gas_type: &GasType, sensor_type: &SensorType, kombisens
     }
     let register_address: i32 = (sensor_num as i32 * 10) + register_address_offset;
 
-    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
-    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
     try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
     try!(modbus.connect());
@@ -44,8 +42,6 @@ pub fn kombisensor_new_modbus_address(kombisensor: &Arc<Mutex<Kombisensor>>, new
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
     let register_address: i32 = 3; // Im Modbus Register[3] ist die Modbus Adresse gespeichert.
 
-    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
-    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
     try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
     try!(modbus.connect());
@@ -66,8 +62,6 @@ pub fn kombisensor_new_modbus_address(kombisensor: &Arc<Mutex<Kombisensor>>, new
 pub fn kombisensor_restart_via_modbus(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<()> {
     let kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
-    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
-    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
     let slave_id: u8 = kombisensor.get_modbus_address();
     let raw_request = vec![slave_id, 0x08, 0x0, 0x01];
@@ -87,8 +81,6 @@ pub fn kombisensor_restart_via_modbus(kombisensor: &Arc<Mutex<Kombisensor>>) -> 
 pub fn kombisensor_discovery(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<()> {
     let mut kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
-    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
-    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
 
     // Erlaubte Modbus Adressen von 1-247 durchsuchen, in umgekehrter Reihenfolge, beginnend bei 247.
@@ -117,8 +109,6 @@ pub fn kombisensor_from_modbus(kombisensor: &Arc<Mutex<Kombisensor>>) -> Result<
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
 
     try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
-    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
-    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
 
     try!(modbus.connect());
@@ -137,8 +127,6 @@ pub fn kombisensor_to_modbus(kombisensor: &Arc<Mutex<Kombisensor>>, values: &Vec
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
 
     try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
-    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
-    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
 
     try!(modbus.connect());
@@ -155,8 +143,6 @@ pub fn enable_sensor(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_type: SensorT
     let kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
     try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
-    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
-    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
     try!(modbus.connect());
 
@@ -174,8 +160,6 @@ pub fn sensor_save_min(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_type: &Sens
     let mut kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
     try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
-    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
-    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
     try!(modbus.connect());
 
@@ -199,8 +183,6 @@ pub fn sensor_save_max(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_type: &Sens
     let mut kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
     try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
-    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
-    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
     try!(modbus.connect());
 
@@ -224,8 +206,6 @@ pub fn sensor_save_conz_nullgas(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_ty
     let mut kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
     try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
-    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
-    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
     try!(modbus.connect());
 
@@ -249,8 +229,6 @@ pub fn sensor_save_conz_messgas(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_ty
     let mut kombisensor = kombisensor.lock().unwrap();
     let mut modbus = Modbus::new_rtu("/dev/ttyUSB0", 9600, 'N', 8, 1);
     try!(modbus.set_slave(kombisensor.get_modbus_address() as i32));
-    #[cfg(debug_assertions)] // cfg(debug_assertions) sorgt dafür,
-    // dass die Modbus Debug Nachrichten nicht in release Builds ausgegeben werden.
     try!(modbus.set_debug(true));
     try!(modbus.connect());
 

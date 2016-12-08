@@ -455,9 +455,6 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
         Inhibit(false)
     });
 
-    // Registriert die Esc Taste mit main_quit() (schliesst also das Fenster mit der Esc Taste),
-    // nur in DEBUG Builds. Wird das Programm mit `--release` übersetzt, funktioniert dies nicht.
-    #[cfg(debug_assertions)]
     window.connect_key_press_event(move |_, key| {
         if let key::Escape = key.get_keyval() {
             gtk::main_quit()
