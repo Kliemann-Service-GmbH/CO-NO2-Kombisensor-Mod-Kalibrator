@@ -1,6 +1,6 @@
 [root]
 name = "kalibrator"
-version = "0.3.3"
+version = "0.3.6"
 dependencies = [
  "gdk 0.5.1 (git+https://github.com/gtk-rs/gdk.git)",
  "gio 0.1.1 (git+https://github.com/gtk-rs/gio.git)",
