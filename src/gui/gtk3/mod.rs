@@ -351,13 +351,13 @@ fn window_setup(window: &gtk::Window) {
         Ok(_) => {
             // Fullscreen geht unter Weston nicht richtig wenn die Fenstergrösse nicht 100% unter unserer Konstrolle sind.
             // Die Anwenung ist dann im Fehlerfall einfach nicht sichtbar, aber gestartet.
-            //window.fullscreen();
+            window.fullscreen();
 
-            // Alternative wird halt ein richtiges Fenster maximiert. Wichtig ist hier das es nicht
-            // schliessbar und verschiebbar ist...
-            window.maximize();
-            window.set_deletable(false);
-            window.set_resizable(false);
+            //// Alternative wird halt ein richtiges Fenster maximiert. Wichtig ist hier das es nicht
+            //// schliessbar und verschiebbar ist...
+            //window.maximize();
+            //window.set_deletable(false);
+            //window.set_resizable(false);
         }
         Err(_) => {}
     }
