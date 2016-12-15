@@ -371,14 +371,14 @@ pub fn launch(configuration: &Arc<Mutex<Configuration>>) {
 
     static_resource::init();
 
-    //// Deaktivier Animationen. Behebt den Bug das der InfoBar nur einmal angezeigt wird, oder
-    //// nur angezeigt wird, wenn das Fenster kein Fokus hat.
-    //// http://stackoverflow.com/questions/39271852/infobar-only-shown-on-window-change/39273438#39273438
-    //// https://gitter.im/gtk-rs/gtk?at=57c8681f6efec7117c9d6b5e
-    //unsafe{
-    //    self::gobject_ffi::g_object_set (gtk_ffi::gtk_settings_get_default () as gpointer,
-    //    "gtk-enable-animations".to_glib_none().0, glib_ffi::GFALSE, ::std::ptr::null::<libc::c_void>());
-    //}
+    // Deaktivier Animationen. Behebt den Bug das der InfoBar nur einmal angezeigt wird, oder
+    // nur angezeigt wird, wenn das Fenster kein Fokus hat.
+    // http://stackoverflow.com/questions/39271852/infobar-only-shown-on-window-change/39273438#39273438
+    // https://gitter.im/gtk-rs/gtk?at=57c8681f6efec7117c9d6b5e
+    unsafe{
+        self::gobject_ffi::g_object_set (gtk_ffi::gtk_settings_get_default() as *mut self::gobject_ffi::GObject,
+        "gtk-enable-animations".to_glib_none().0, glib_ffi::GFALSE);
+    }
 
     // Die Kombisensor Datenstruktur ist die Softwarebescheibung des Sensors an den der Kalibrator
     // angeschlossen ist. Mit dessen Funktionen und Attributen werden dann die verschiedenen
