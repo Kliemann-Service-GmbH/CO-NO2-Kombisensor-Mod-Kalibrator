@@ -19,11 +19,10 @@ pub fn sensor_new_adc_at(gas_type: &GasType, sensor_type: &SensorType, kombisens
         SensorType::RaGasNO2 => 0,
         SensorType::RaGasCO => 1,
     };
-    let mut register_address_offset = 0;
-    match *gas_type {
-        GasType::Nullgas => { register_address_offset = 14; }  // Register 14 oder 24 ADC Nullgas
-        GasType::Messgas => { register_address_offset = 15; }  // Register 15 oder 25 ADC Nullgas
-    }
+    let register_address_offset = match *gas_type {
+        GasType::Nullgas => { 14 }  // Register 14 oder 24 ADC Nullgas
+        GasType::Messgas => { 15 }  // Register 15 oder 25 ADC Nullgas
+    };
     let register_address: i32 = (sensor_num as i32 * 10) + register_address_offset;
 
     try!(modbus.set_debug(true));
