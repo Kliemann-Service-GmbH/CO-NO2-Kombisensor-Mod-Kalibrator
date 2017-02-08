@@ -211,11 +211,11 @@ pub fn sensor_save_conz_nullgas(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_ty
 
     match *sensor_type {
         SensorType::RaGasNO2 => {
-            try!(modbus.write_register(14, conz_nullgas_value));
+            try!(modbus.write_register(16, conz_nullgas_value));
             kombisensor.sensors[0].set_concentration_at_nullgas(conz_nullgas_value as u16);
         }
         SensorType::RaGasCO =>  {
-            try!(modbus.write_register(24, conz_nullgas_value));
+            try!(modbus.write_register(26, conz_nullgas_value));
             kombisensor.sensors[1].set_concentration_at_nullgas(conz_nullgas_value as u16);
         }
     }
@@ -234,11 +234,11 @@ pub fn sensor_save_conz_messgas(kombisensor: &Arc<Mutex<Kombisensor>>, sensor_ty
 
     match *sensor_type {
         SensorType::RaGasNO2 => {
-            try!(modbus.write_register(15, conz_messgas_value));
+            try!(modbus.write_register(17, conz_messgas_value));
             kombisensor.sensors[0].set_concentration_at_messgas(conz_messgas_value as u16);
         }
         SensorType::RaGasCO =>  {
-            try!(modbus.write_register(25, conz_messgas_value));
+            try!(modbus.write_register(27, conz_messgas_value));
             kombisensor.sensors[1].set_concentration_at_messgas(conz_messgas_value as u16);
         }
     }
