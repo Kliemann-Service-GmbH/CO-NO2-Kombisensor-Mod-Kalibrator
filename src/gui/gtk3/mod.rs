@@ -1,8 +1,8 @@
-extern crate libc;
 extern crate glib_sys as glib_ffi;
-extern crate gtk_sys as gtk_ffi;
-extern crate gobject_sys as gobject_ffi;
 extern crate glib;
+extern crate gobject_sys as gobject_ffi;
+extern crate gtk_sys as gtk_ffi;
+extern crate libc;
 
 use co_no2_kombisensor::*;
 use co_no2_kombisensor::sensor::SensorType;
@@ -16,10 +16,10 @@ use self::glib::translate::ToGlibPtr;
 use std::error::Error;
 use std::sync::{Arc, Mutex};
 
-mod view_calibrator;
 mod static_resource;
-mod view_messpunkt;
+mod view_calibrator;
 mod view_liveview;
+mod view_messpunkt;
 mod view_show_values;
 
 

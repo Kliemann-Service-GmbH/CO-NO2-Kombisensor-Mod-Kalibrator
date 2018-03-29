@@ -1,18 +1,3 @@
-[root]
-name = "kalibrator"
-version = "0.3.8"
-dependencies = [
- "gdk 0.5.1 (git+https://github.com/gtk-rs/gdk.git)",
- "gio 0.1.1 (git+https://github.com/gtk-rs/gio.git)",
- "glib 0.1.1 (git+https://github.com/gtk-rs/glib.git)",
- "glib-sys 0.3.2 (git+https://github.com/gtk-rs/sys.git)",
- "gobject-sys 0.3.2 (git+https://github.com/gtk-rs/sys.git)",
- "gtk 0.1.1 (git+https://github.com/gtk-rs/gtk.git)",
- "gtk-sys 0.3.2 (git+https://github.com/gtk-rs/sys.git)",
- "libc 0.2.20 (registry+https://github.com/rust-lang/crates.io-index)",
- "libmodbus-rs 0.3.5 (git+https://github.com/zzeroo/libmodbus-rs.git)",
-]
-
 [[package]]
 name = "atk-sys"
 version = "0.3.2"
@@ -222,6 +207,21 @@ dependencies = [
  "libc 0.2.20 (registry+https://github.com/rust-lang/crates.io-index)",
  "pango-sys 0.3.2 (git+https://github.com/gtk-rs/sys.git)",
  "pkg-config 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "kalibrator"
+version = "0.3.8"
+dependencies = [
+ "gdk 0.5.1 (git+https://github.com/gtk-rs/gdk.git)",
+ "gio 0.1.1 (git+https://github.com/gtk-rs/gio.git)",
+ "glib 0.1.1 (git+https://github.com/gtk-rs/glib.git)",
+ "glib-sys 0.3.2 (git+https://github.com/gtk-rs/sys.git)",
+ "gobject-sys 0.3.2 (git+https://github.com/gtk-rs/sys.git)",
+ "gtk 0.1.1 (git+https://github.com/gtk-rs/gtk.git)",
+ "gtk-sys 0.3.2 (git+https://github.com/gtk-rs/sys.git)",
+ "libc 0.2.20 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libmodbus-rs 0.3.5 (git+https://github.com/zzeroo/libmodbus-rs.git)",
 ]
 
 [[package]]
